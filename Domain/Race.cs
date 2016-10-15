@@ -1,33 +1,26 @@
 ﻿using System;
-using System.Text;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 using Feathers;
 
 namespace Yatagarasu.Domain
 {
-
-    public class Game
+    public class Race
     {
-
         public virtual int Id { get; set; }
 
         public virtual string Name { get; set; }
 
-        private ISet<Race> races = new HashSet<Race>();
-        public virtual ISet<Race> Races
-        {
-            get { return races; }
-            set { races = value; }
-        }
+        public virtual string Pronunciation { get; set; }
+        // also game
 
         public override string ToString()
         {
             return "Id = " + FeatherStrings.TraceString(Id) +
-                ", " + "Name = " + FeatherStrings.TraceString(Name);
+                ", " + "Name = " + FeatherStrings.TraceString(Name) +
+                ", " + "Pronunciation = " + FeatherStrings.TraceString(Pronunciation);
         }
-
-
-
     }
 }

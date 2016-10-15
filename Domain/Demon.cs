@@ -7,27 +7,22 @@ using Feathers;
 namespace Yatagarasu.Domain
 {
 
-    public class Game
+    public class Demon
     {
-
         public virtual int Id { get; set; }
+
+        public virtual int Level { get; set; }
 
         public virtual string Name { get; set; }
 
-        private ISet<Race> races = new HashSet<Race>();
-        public virtual ISet<Race> Races
-        {
-            get { return races; }
-            set { races = value; }
-        }
+        public virtual Race Race { get; set; }
 
         public override string ToString()
         {
             return "Id = " + FeatherStrings.TraceString(Id) +
-                ", " + "Name = " + FeatherStrings.TraceString(Name);
+                ", " + "Level = " + FeatherStrings.TraceString(Level) +
+                ", " + "Name = " + FeatherStrings.TraceString(Name) + 
+                ", " + "Race = " + FeatherStrings.TraceString(Race.Name);
         }
-
-
-
     }
 }

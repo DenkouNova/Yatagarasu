@@ -3,17 +3,14 @@
                   assembly="Yatagarasu"
                   namespace="Yatagarasu.Domain">
 
-  <class name="Game" table="Games">
+  <class name="Demon" table="Demons">
     <id name="Id">
       <generator class="increment" />
     </id>
+    <property name="Level" />
     <property name="Name" />
-    <!--<set name="Races" inverse="true">
-      <key>
-        <column name="IdGame"/>
-      </key>
-      <one-to-many class="Race"/>
-    </set>-->
+
+    <many-to-one name="Race" class="Race" column="IdRace"/>
   </class>
 
 </hibernate-mapping>
