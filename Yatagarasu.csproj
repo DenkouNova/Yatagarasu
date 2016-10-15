@@ -92,6 +92,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DemonsDataGridView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Domain\Demon.cs" />
     <Compile Include="Domain\Game.cs" />
     <Compile Include="Domain\Race.cs" />

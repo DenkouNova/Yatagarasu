@@ -9,6 +9,12 @@
     </id>
     <property name="Name" />
     <property name="Pronunciation" />
+    <set name="Demons" inverse="true">
+      <key>
+        <column name="IdRace"/>
+      </key>
+      <one-to-many class="Demon"/>
+    </set>
   </class>
 
 </hibernate-mapping>

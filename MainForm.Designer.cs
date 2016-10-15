@@ -31,11 +31,10 @@
             this.cbGame = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tbLog = new System.Windows.Forms.TextBox();
-            this.dgvData = new System.Windows.Forms.DataGridView();
             this.rbDisplayDemons = new System.Windows.Forms.RadioButton();
             this.rbDisplayFusions = new System.Windows.Forms.RadioButton();
             this.btnRefresh = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvData)).BeginInit();
+            this.pData = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
             // cbGame
@@ -63,14 +62,6 @@
             this.tbLog.Name = "tbLog";
             this.tbLog.Size = new System.Drawing.Size(286, 478);
             this.tbLog.TabIndex = 3;
-            // 
-            // dgvData
-            // 
-            this.dgvData.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvData.Location = new System.Drawing.Point(320, 16);
-            this.dgvData.Name = "dgvData";
-            this.dgvData.Size = new System.Drawing.Size(764, 595);
-            this.dgvData.TabIndex = 9;
             // 
             // rbDisplayDemons
             // 
@@ -104,21 +95,27 @@
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
+            // pData
+            // 
+            this.pData.Location = new System.Drawing.Point(320, 13);
+            this.pData.Name = "pData";
+            this.pData.Size = new System.Drawing.Size(768, 597);
+            this.pData.TabIndex = 13;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1100, 623);
+            this.Controls.Add(this.pData);
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.rbDisplayFusions);
             this.Controls.Add(this.rbDisplayDemons);
-            this.Controls.Add(this.dgvData);
             this.Controls.Add(this.tbLog);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cbGame);
             this.Name = "MainForm";
             this.Text = "Yatagarasu";
-            ((System.ComponentModel.ISupportInitialize)(this.dgvData)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -129,10 +126,10 @@
         private System.Windows.Forms.ComboBox cbGame;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbLog;
-        private System.Windows.Forms.DataGridView dgvData;
         private System.Windows.Forms.RadioButton rbDisplayDemons;
         private System.Windows.Forms.RadioButton rbDisplayFusions;
         private System.Windows.Forms.Button btnRefresh;
+        private System.Windows.Forms.Panel pData;
     }
 }
 

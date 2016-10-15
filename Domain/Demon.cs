@@ -9,7 +9,9 @@ namespace Yatagarasu.Domain
 
     public class Demon
     {
-        public virtual int Id { get; set; }
+        public Demon() { Id = null; }
+
+        public virtual int? Id { get; set; }
 
         public virtual int Level { get; set; }
 

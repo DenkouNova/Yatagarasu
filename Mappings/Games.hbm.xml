@@ -8,12 +8,12 @@
       <generator class="increment" />
     </id>
     <property name="Name" />
-    <!--<set name="Races" inverse="true">
+    <set name="Races" inverse="true">
       <key>
         <column name="IdGame"/>
       </key>
       <one-to-many class="Race"/>
-    </set>-->
+    </set>
   </class>
 
 </hibernate-mapping>

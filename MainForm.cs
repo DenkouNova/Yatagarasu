@@ -66,8 +66,8 @@ namespace Yatagarasu
             string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
             _logger.OpenSection(location);
 
-            _logger.Warn("Not implemented.");
-            MessageBox.Show("Not implemented.");
+            foreach (Control c in this.pData.Controls) Controls.Remove(c);
+            this.pData.Controls.Add(new DemonsDataGridView());
             
             _logger.CloseSection(location);
         }
@@ -84,6 +84,8 @@ namespace Yatagarasu
             var allDemons = _dbSession.CreateCriteria<Domain.Demon>().List<Domain.Demon>();
             allDemons.OrderBy(x => x.Level).ToList().
                 ForEach(x => this.tbLog.Text += "Lv" + x.Level + " " + x.Race.Name + " " + x.Name + "\r\n");
+
+            
 
             _logger.CloseSection(location);
         }
