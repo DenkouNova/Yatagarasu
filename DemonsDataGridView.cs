@@ -46,7 +46,7 @@ namespace Yatagarasu
             _maxDemonId = allDemons.Select(x => x.Id).Max().GetValueOrDefault();
             foreach(Demon d in allDemons)
             {
-                _logger.Info(d.Name);
+                _logger.Info("Loaded this demon: " + d.ToString());
                 this.Rows.Add(CreateRow(d));
             }
             this.CellValidating += new DataGridViewCellValidatingEventHandler(this_CellValidating);
@@ -109,47 +109,30 @@ namespace Yatagarasu
             return returnObjectArray;
         }
 
-        private object[] CreateEmptyRow()
-        {
-            _logger = GlobalObjects.Logger;
-            string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
-            _logger.OpenSection(location);
-
-            _logger.OpenSection(location);
-
-            _maxDemonId++;
-            var returnObjectArray = new object[4];
-            returnObjectArray[COLUMN_ID] = _maxDemonId;
-            returnObjectArray[COLUMN_LEVEL] = null;
-            returnObjectArray[COLUMN_RACE] = null;
-            returnObjectArray[COLUMN_NAME] = null;
-
-            _logger.CloseSection(location);
-
-            // TODO:
-            // do a select * on all races of the game
-            // create a combobox with it
-            // assign the combo box to object array 2
-            // select the index of the correct race
-
-            return returnObjectArray;
-        }
-
-
         
         private void InitializeColumnsAndStuff()
         {
             this.colId = new System.Windows.Forms.DataGridViewTextBoxColumn() 
-                { HeaderText = "Id", Name = "colId", Width = 35, ReadOnly = true };
+                { HeaderText = "Id", Name = "colId", Width = 70, ReadOnly = true };
             this.colLevel = new System.Windows.Forms.DataGridViewTextBoxColumn()
-                { HeaderText = "Level", Name = "colLevel", Width = 40 };
+                { HeaderText = "Level", Name = "colLevel", Width = 80 };
             this.colRace = new System.Windows.Forms.DataGridViewTextBoxColumn() 
-                { HeaderText = "Race", Name = "colRace", Width = 40 };
+                { HeaderText = "Race", Name = "colRace", Width = 120 };
             this.colName = new System.Windows.Forms.DataGridViewTextBoxColumn()
-                { HeaderText = "Name", Name = "colName", Width = 90 };
+                { HeaderText = "Name", Name = "colName", Width = 240 };
+
+            this.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+            this.AllowUserToResizeRows = false;
+            this.RowTemplate.Height = 40;
+            this.RowTemplate.MinimumHeight = 40;
+
+            this.colLevel.DefaultCellStyle =
+                this.colRace.DefaultCellStyle =
+                this.colName.DefaultCellStyle =
+                GlobalObjects.GetDefaultDataGridViewCellStyle();
 
             this.colId.DefaultCellStyle =
-                new DataGridViewCellStyle() { BackColor = SystemColors.ControlLight };
+                GlobalObjects.GetDisabledDataGridViewCellStyle();
 
             this.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
 				this.colId,

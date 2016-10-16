@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using System.Windows.Forms;
+using System.Drawing;
 
 using Feathers;
 
@@ -67,5 +69,35 @@ namespace Yatagarasu
                 throw;
             }
         }
+
+
+        public static DataGridViewCellStyle GetDefaultDataGridViewCellStyle()
+        {
+            return new DataGridViewCellStyle()
+                {
+                    Font = new System.Drawing.Font
+                        ("MS PMincho",
+                        20.25F,
+                        System.Drawing.FontStyle.Regular,
+                        System.Drawing.GraphicsUnit.Point,
+                        ((byte)(0)))
+                };
+        }
+
+
+        public static DataGridViewCellStyle GetDisabledDataGridViewCellStyle()
+        {
+            return new DataGridViewCellStyle()
+            {
+                BackColor = SystemColors.ControlLight,
+                Font = new System.Drawing.Font
+                    ("MS PMincho",
+                    20.25F,
+                    System.Drawing.FontStyle.Regular,
+                    System.Drawing.GraphicsUnit.Point,
+                    ((byte)(0)))
+            };
+        }
+
     }
 }

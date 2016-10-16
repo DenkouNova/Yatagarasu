@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                  assembly="Yatagarasu"
+                  namespace="Yatagarasu.Domain">
+
+  <class name="Fusion" table="Fusions">
+    <composite-id name="FusionIdentifier" class="FusionIdentifier">
+      <key-property name="IdRace1"/>
+      <key-property name="IdRace2"/>
+    </composite-id>
+    <property name="IdRace3" />
+
+    <!--
+    <many-to-one name="Race1" class="Race" column="IdRace1"/>
+    <many-to-one name="Race2" class="Race" column="IdRace2"/>
+    <many-to-one name="Race3" class="Race" column="IdRace3"/>
+    -->
+    
+  </class>
+
+</hibernate-mapping>

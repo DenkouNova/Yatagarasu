@@ -66,7 +66,10 @@ namespace Yatagarasu
             string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
             _logger.OpenSection(location);
 
-            foreach (Control c in this.pData.Controls) Controls.Remove(c);
+            foreach (Control c in this.pData.Controls)
+            {
+                this.pData.Controls.Remove(c);
+            } 
             this.pData.Controls.Add(new DemonsDataGridView());
             
             _logger.CloseSection(location);
@@ -77,6 +80,10 @@ namespace Yatagarasu
             string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
             _logger.OpenSection(location);
 
+            foreach (Control c in this.pData.Controls) this.pData.Controls.Remove(c);
+            this.pData.Controls.Add(new FusionsDataGridView());
+
+            /*
             var allRaces = _dbSession.CreateCriteria<Domain.Race>().List<Domain.Race>();
             allRaces.OrderBy(x => x.Pronunciation).ToList().
                 ForEach(x => this.tbLog.Text += x.Name + " (" + x.Pronunciation + ")\r\n");
@@ -84,8 +91,7 @@ namespace Yatagarasu
             var allDemons = _dbSession.CreateCriteria<Domain.Demon>().List<Domain.Demon>();
             allDemons.OrderBy(x => x.Level).ToList().
                 ForEach(x => this.tbLog.Text += "Lv" + x.Level + " " + x.Race.Name + " " + x.Name + "\r\n");
-
-            
+            */
 
             _logger.CloseSection(location);
         }
@@ -123,6 +129,7 @@ namespace Yatagarasu
             }
         }
         #endregion
+
 
 
     }
