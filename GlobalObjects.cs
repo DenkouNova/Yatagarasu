@@ -21,6 +21,8 @@ namespace Yatagarasu
         private static ISession _dbSession = null;
         private static Domain.Game _game = null;
 
+        public static MainForm MainForm { get; set; }
+
         public static FeatherLogger Logger 
             { get { return _logger ?? (_logger = CreateFeatherLogger()); } }
 
@@ -71,32 +73,54 @@ namespace Yatagarasu
         }
 
 
-        public static DataGridViewCellStyle GetDefaultDataGridViewCellStyle()
+        public static DataGridViewCellStyle GetDefaultDgvcStyle(float fontSize, bool enabled = true)
         {
-            return new DataGridViewCellStyle()
-                {
-                    Font = new System.Drawing.Font
-                        ("MS PMincho",
-                        20.25F,
-                        System.Drawing.FontStyle.Regular,
-                        System.Drawing.GraphicsUnit.Point,
-                        ((byte)(0)))
-                };
-        }
-
-
-        public static DataGridViewCellStyle GetDisabledDataGridViewCellStyle()
-        {
-            return new DataGridViewCellStyle()
+            var returnStyle = new DataGridViewCellStyle()
             {
-                BackColor = SystemColors.ControlLight,
                 Font = new System.Drawing.Font
                     ("MS PMincho",
-                    20.25F,
+                    fontSize,
                     System.Drawing.FontStyle.Regular,
                     System.Drawing.GraphicsUnit.Point,
                     ((byte)(0)))
             };
+            
+            if (!enabled) returnStyle.BackColor = SystemColors.ControlLight;
+            return returnStyle;
+        }
+
+
+        public static Domain.Race InsertRaceMaybe(string raceName)
+        {
+            string location = new StackFrame().GetMethod().DeclaringType.ToString(); 
+            _logger.OpenSection(location);
+
+            string message = "Inserting new family '" + raceName + "'";
+            _logger.Info("Asking user: '" + message + "'");
+
+            Domain.Race returnRace = null;
+
+            DialogResult dr = MessageBox.Show(message, "New family",
+                MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+            if (dr == DialogResult.Cancel)
+            {
+                _logger.Info("User cancelled; race will not be inserted.");
+            }
+            else
+            {
+                var insertedRace = new Domain.Race()
+                {
+                    Name = raceName,
+                    Game = GlobalObjects.CurrentGame
+                };
+                _logger.Info("Inserting race...");
+                _dbSession.Save(insertedRace);
+                _logger.Info("Inserted race: " + insertedRace.ToString());
+                returnRace = insertedRace;
+            }
+
+            _logger.CloseSection(location);
+            return returnRace;
         }
 
     }

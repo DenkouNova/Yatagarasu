@@ -22,113 +22,141 @@ namespace Yatagarasu
         FeatherLogger _logger;
         ISession _dbSession;
 
+        ChooseGameForm _chooseGameForm;
+        DemonsListForm _demonsListForm, _partyDemonsForm;
+        FusionsForm _fusionsForm;
+
+        private const string FORM_NAME = "Yatagarasu";
+
         public MainForm()
         {
             _logger = GlobalObjects.Logger;
             string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
             _logger.OpenSection(location);
-
             _dbSession = GlobalObjects.DbSession;
-
+            _logger.Info("Initializing component...");
             InitializeComponent();
-            RefreshButtons();
-            UpdateGamesComboBox();
+
+            GlobalObjects.MainForm = this;
+            GlobalObjects.CurrentGame = null;
+
+            ShowDemonsListForm();
+            ShowPartyDemonsForm();
+            ShowFusionsForm();
+
+            ShowChooseGameForm();
 
             _logger.CloseSection(location);
         }
 
-        private void RefreshButtons()
-        {
-            this.rbDisplayDemons.Enabled =
-                this.rbDisplayFusions.Enabled =
-                this.btnRefresh.Enabled = 
-                    (GlobalObjects.CurrentGame != null);
-        }
 
-
-        private void UpdateGamesComboBox()
+        public void ChooseGame(Domain.Game game)
         {
             string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
             _logger.OpenSection(location);
+            _logger.Info("Called with game = " + (game == null ? "(null)" : game.Name));
 
-            var games = _dbSession.CreateCriteria<Domain.Game>().List<Domain.Game>();
-            foreach (Domain.Game oneGame in games)
+            if (game == GlobalObjects.CurrentGame)
             {
-                this.cbGame.Items.Add(new FeatherItem(oneGame.Name, oneGame));
+                _logger.Info("Game is same as current game, nothing to do.");
             }
-            if (games.Count > 0) this.cbGame.SelectedIndex = 0;
-
-            _logger.CloseSection(location);
-        }
-
-        private void DisplayDemons()
-        {
-            string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
-            _logger.OpenSection(location);
-
-            foreach (Control c in this.pData.Controls)
+            else
             {
-                this.pData.Controls.Remove(c);
-            } 
-            this.pData.Controls.Add(new DemonsDataGridView());
-            
-            _logger.CloseSection(location);
-        }
+                GlobalObjects.CurrentGame = game;
 
-        private void DisplayFusions()
-        {
-            string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
-            _logger.OpenSection(location);
+                string text = FORM_NAME + (game == null ? "" : " - " + game.Name);
+                _logger.Info("Setting form text to '" + text + "'");
+                this.Text = text;
 
-            foreach (Control c in this.pData.Controls) this.pData.Controls.Remove(c);
-            this.pData.Controls.Add(new FusionsDataGridView());
-
-            /*
-            var allRaces = _dbSession.CreateCriteria<Domain.Race>().List<Domain.Race>();
-            allRaces.OrderBy(x => x.Pronunciation).ToList().
-                ForEach(x => this.tbLog.Text += x.Name + " (" + x.Pronunciation + ")\r\n");
-
-            var allDemons = _dbSession.CreateCriteria<Domain.Demon>().List<Domain.Demon>();
-            allDemons.OrderBy(x => x.Level).ToList().
-                ForEach(x => this.tbLog.Text += "Lv" + x.Level + " " + x.Race.Name + " " + x.Name + "\r\n");
-            */
-
-            _logger.CloseSection(location);
-        }
-
-
-
-        #region event handlers
-        private void cbGame_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
-            _logger.OpenSection(location);
-
-            FeatherItem selectedItem;
-            Domain.Game selectedGame = null;
-
-            selectedItem = this.cbGame.SelectedItem as FeatherItem;
-            if (selectedItem != null)
-                selectedGame = selectedItem.Value as Domain.Game;
-            _logger.Info("Currently selected game is " + 
-                (selectedGame == null ? "(null)" : "'" + selectedGame.Name + "'"));
-            GlobalObjects.CurrentGame = selectedGame;
-            RefreshButtons();
-            _logger.CloseSection(location);
-        }
-
-        private void btnRefresh_Click(object sender, EventArgs e)
-        {
-            if (rbDisplayDemons.Checked)
-            {
-                DisplayDemons();
+                if (_demonsListForm != null) _demonsListForm.LoadData();
+                if (_fusionsForm != null) _fusionsForm.LoadData();
             }
-            if (rbDisplayFusions.Checked)
+
+            _logger.CloseSection(location);
+        }
+
+
+        private void ShowChooseGameForm()
+        {
+            string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
+            _logger.OpenSection(location);
+            if (_chooseGameForm == null)
             {
-                DisplayFusions();
+                _logger.Info("Form is null. Creating...");
+                _chooseGameForm = new ChooseGameForm();
+                _chooseGameForm.MdiParent = this;
             }
+            _logger.Info(_chooseGameForm.Visible ? "Form is already visible." : "Showing form...");
+            if (!_chooseGameForm.Visible) _chooseGameForm.Show();
+            _logger.CloseSection(location);
+        }
+
+
+        private void ShowDemonsListForm()
+        {
+            string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
+            _logger.OpenSection(location);
+            if (_demonsListForm == null)
+            {
+                _logger.Info("Form is null. Creating...");
+                _demonsListForm = new DemonsListForm(DemonsListForm.DemonsListMode.AllDemons);
+                _demonsListForm.MdiParent = this;
+            }
+            _logger.Info(_demonsListForm.Visible ? "Form is already visible." : "Showing form...");
+            if (!_demonsListForm.Visible) _demonsListForm.Show();
+            _logger.CloseSection(location);
+        }
+
+
+        private void ShowPartyDemonsForm()
+        {
+            string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
+            _logger.OpenSection(location);
+            if (_partyDemonsForm == null)
+            {
+                _logger.Info("Form is null. Creating...");
+                _partyDemonsForm = new DemonsListForm(DemonsListForm.DemonsListMode.PartyDemons);
+                _partyDemonsForm.MdiParent = this;
+            }
+            _logger.Info(_partyDemonsForm.Visible ? "Form is already visible." : "Showing form...");
+            if (!_partyDemonsForm.Visible) _partyDemonsForm.Show();
+            _logger.CloseSection(location);
+        }
+
+
+        private void ShowFusionsForm()
+        {
+            string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
+            _logger.OpenSection(location);
+            if (_fusionsForm == null)
+            {
+                _logger.Info("Form is null. Creating...");
+                _fusionsForm = new FusionsForm();
+                _fusionsForm.MdiParent = this;
+            }
+            _logger.Info(_fusionsForm.Visible ? "Form is already visible." : "Showing form...");
+            if (!_fusionsForm.Visible) _fusionsForm.Show();
+            _logger.CloseSection(location);
+        }
+
+
+        #region Event Handlers
+        private void chooseGameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowChooseGameForm();
+        }
+
+        private void demonsListToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowDemonsListForm();
+        }
+
+        private void partyDemonsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowPartyDemonsForm();
         }
         #endregion
+
 
 
 

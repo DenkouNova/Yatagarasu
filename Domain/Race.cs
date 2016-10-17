@@ -13,8 +13,7 @@ namespace Yatagarasu.Domain
 
         public virtual string Name { get; set; }
 
-        public virtual string Pronunciation { get; set; }
-        // also game
+        public virtual Game Game { get; set; }
 
         private ISet<Demon> demons = new HashSet<Demon>();
         public virtual ISet<Demon> Demons
@@ -26,8 +25,7 @@ namespace Yatagarasu.Domain
         public override string ToString()
         {
             return "Id = " + FeatherStrings.TraceString(Id) +
-                ", " + "Name = " + FeatherStrings.TraceString(Name) +
-                ", " + "Pronunciation = " + FeatherStrings.TraceString(Pronunciation);
+                ", " + "Name = " + FeatherStrings.TraceString(Name);
         }
     }
 }

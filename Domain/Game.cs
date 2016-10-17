@@ -14,6 +14,8 @@ namespace Yatagarasu.Domain
 
         public virtual string Name { get; set; }
 
+        public virtual int Year { get; set; }
+
         private ISet<Race> races = new HashSet<Race>();
         public virtual ISet<Race> Races
         {

@@ -19,6 +19,24 @@ namespace Yatagarasu.Domain
 
         public virtual Race Race { get; set; }
 
+        public override bool Equals(object obj)
+        {
+            Domain.Demon other = obj as Domain.Demon;
+            if (other != null)
+            {
+                if (this.Level == other.Level &&
+                    this.Name == other.Name)
+                {
+                    if (this.Race == null && other.Race == null)
+                        return true;
+
+                    if (this.Race != null && other.Race != null && this.Race.Id == other.Race.Id)
+                        return true;
+                }
+            }
+            return false;
+        }
+
         public override string ToString()
         {
             return "Id = " + FeatherStrings.TraceString(Id) +

@@ -8,6 +8,7 @@
       <generator class="increment" />
     </id>
     <property name="Name" />
+    <property name="Year" />
     <set name="Races" inverse="true">
       <key>
         <column name="IdGame"/>
