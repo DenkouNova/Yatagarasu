@@ -41,6 +41,27 @@ namespace Yatagarasu.Domain
     {
         ISession _dbSession = GlobalObjects.DbSession;
 
+        public Fusion() { }
+
+        public Fusion(Race r1, Race r2, Race r3)
+        {
+            Race insertedRace1, insertedRace2, insertedRace3;
+
+            insertedRace1 = (r1.Id < r2.Id) ? r2 : r1;
+            insertedRace2 = (r1.Id < r2.Id) ? r1 : r2;
+            insertedRace3 = r3;            
+
+            FusionIdentifier = new FusionIdentifier()
+            {
+                IdRace1 = insertedRace1.Id,
+                IdRace2 = insertedRace2.Id
+            };
+            IdRace3 = r3.Id;
+            race1 = insertedRace1;
+            race2 = insertedRace2;
+            race3 = insertedRace3;
+        }
+
         public virtual FusionIdentifier FusionIdentifier { get; set; }
 
         public virtual int? IdRace3 { get; set; }
@@ -57,7 +78,10 @@ namespace Yatagarasu.Domain
                     race1 = _dbSession.Get<Domain.Race>(FusionIdentifier.IdRace1);
                 return race1;
             }
-            set { race1 = value; }
+            set {
+                race1 = value;
+                FusionIdentifier.IdRace1 = race1.Id;
+            }
         }
 
         public virtual Race Race2
@@ -68,7 +92,10 @@ namespace Yatagarasu.Domain
                     race2 = _dbSession.Get<Domain.Race>(FusionIdentifier.IdRace2);
                 return race2;
             }
-            set { race2 = value; }
+            set { 
+                race2 = value;
+                FusionIdentifier.IdRace2 = race2.Id;
+            }
         }
 
         public virtual Race Race3

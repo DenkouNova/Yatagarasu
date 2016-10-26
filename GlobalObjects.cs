@@ -20,7 +20,7 @@ namespace Yatagarasu
         private static FeatherLogger _logger = null;
         private static ISession _dbSession = null;
         private static Domain.Game _game = null;
-
+        
         public static MainForm MainForm { get; set; }
 
         public static FeatherLogger Logger 
@@ -33,6 +33,8 @@ namespace Yatagarasu
             get { return _game; }
             set { _game = value; }
         }
+
+        public static Domain.Race ImpossibleToFuseRace { get; set; }
 
         private static FeatherLogger CreateFeatherLogger()
         {

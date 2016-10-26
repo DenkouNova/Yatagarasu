@@ -30,9 +30,19 @@ namespace Yatagarasu
 
             PopulateGamesComboBox();
 
+            SetImpossibleToFuseRace();
+
             _logger.CloseSection(location);
         }
 
+
+        private void SetImpossibleToFuseRace()
+        {
+            string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
+            _logger.OpenSection(location);
+            GlobalObjects.ImpossibleToFuseRace = _dbSession.Get<Domain.Race>(0);
+            _logger.CloseSection(location);
+        }
 
         private void PopulateGamesComboBox()
         {

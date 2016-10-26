@@ -62,8 +62,11 @@ namespace Yatagarasu
                 _logger.Info("Game '" + game.Name + "' chosen; will load list of fusions.");
 
                 var currentGameRaces = game.Races.ToList();
-                var currentGameRaceIds = currentGameRaces.Select(x => x.Id);
-                var allFusions = _dbSession.CreateCriteria<Domain.Fusion>().List<Domain.Fusion>()
+                var currentGameRaceIds = currentGameRaces.Select(x => x.Id).ToList();
+                var allFusionsInAllGames = 
+                    _dbSession.CreateCriteria<Domain.Fusion>().List<Domain.Fusion>();
+
+                var allFusions = allFusionsInAllGames
                     .Where(x => currentGameRaceIds.Contains(x.FusionIdentifier.IdRace1))
                     .OrderBy(y => y.FusionIdentifier.IdRace1)
                     .ThenBy(z => z.FusionIdentifier.IdRace2).ToList();
@@ -76,7 +79,11 @@ namespace Yatagarasu
                 oneRow[0] = " ";
                 for (int i = 0; i < currentGameRaces.Count; i++)
                     oneRow[i + 1] = currentGameRaces[i].Name;
+                    
+                // race tag on every cell of the first row except the first one
                 this.dgvFusions.Rows.Add(oneRow);
+                for (int i = 0; i < currentGameRaces.Count; i++)
+                    this.dgvFusions.Rows[0].Cells[i+1].Tag = currentGameRaces[i];
 
                 // following rows
                 DataGridViewRow oneDgvr;
@@ -176,6 +183,7 @@ namespace Yatagarasu
 
         private void dgvFusions_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
+            List<Domain.Fusion> allFusions;
             if (_cellChanged)
             {
                 string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
@@ -185,7 +193,13 @@ namespace Yatagarasu
                 Domain.Race race1 = this.dgvFusions.Rows[0].Cells[e.ColumnIndex].Tag as Domain.Race;
                 Domain.Race race2 = this.dgvFusions.Rows[e.RowIndex].Cells[0].Tag as Domain.Race;
                 var resultCell = this.dgvFusions.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                Domain.Race race3 = resultCell.Tag as Domain.Race;
+                Domain.Race race3 =
+                    GlobalObjects.CurrentGame.Races.Where(x => x.Name == resultCell.Value.ToString()).FirstOrDefault();
+
+                if (race3 == null && resultCell.ToString() == GlobalObjects.ImpossibleToFuseRace.Name)
+                {
+                    race3 = GlobalObjects.ImpossibleToFuseRace;
+                }
 
                 if (race3 == null)
                 {
@@ -200,19 +214,51 @@ namespace Yatagarasu
                 }
                 else
                 {
-                    // TODO FIX THIS
-                    var currentFusion = _dbSession.CreateCriteria<Domain.Fusion>().List<Domain.Fusion>()
-                    .Where(x => x.FusionIdentifier.IdRace1 == race1.Id &&
-                        x.FusionIdentifier.IdRace2 == race2.Id).FirstOrDefault();
+                    using (var transaction = _dbSession.BeginTransaction())
+                    {
+                        allFusions = 
+                            _dbSession.CreateCriteria<Domain.Fusion>().List<Domain.Fusion>().ToList();
+                        List<Domain.Fusion> allFusions1 =
+                            _dbSession.CreateCriteria<Domain.Fusion>().List<Domain.Fusion>()
+                            .Where(x => x.FusionIdentifier.IdRace1 == race1.Id).ToList();
+                        List<Domain.Fusion> allFusions2 =
+                            _dbSession.CreateCriteria<Domain.Fusion>().List<Domain.Fusion>()
+                            .Where(x => x.FusionIdentifier.IdRace1 == race2.Id).ToList();
 
-                    _logger.Info("Got fusion " + currentFusion.ToString());
-                    _logger.Info("Result of fusion will now be " + race3.ToString());
+                        var oneRace = _dbSession.Get<Domain.Race>(race1.Id);
 
-                    currentFusion.IdRace3 = race3.Id;
-                    currentFusion.Race3 = race3;
-
-                    _dbSession.SaveOrUpdate(currentFusion);
-                    _logger.Info("Fusion saved.");
+                        var currentFusion =
+                            _dbSession.CreateCriteria<Domain.Fusion>().List<Domain.Fusion>()
+                            .Where(x => x.FusionIdentifier.IdRace1 == race1.Id &&
+                            x.FusionIdentifier.IdRace2 == race2.Id).FirstOrDefault();
+                        if (currentFusion == null)
+                        {
+                            _dbSession.CreateCriteria<Domain.Fusion>().List<Domain.Fusion>()
+                            .Where(x => x.FusionIdentifier.IdRace1 == race2.Id &&
+                            x.FusionIdentifier.IdRace2 == race1.Id).FirstOrDefault();
+                        }
+                        if (currentFusion != null)
+                        {
+                            _logger.Info("Got fusion " + currentFusion.ToString());
+                            _logger.Info("Result of fusion will now be " + race3.ToString());
+                            currentFusion.IdRace3 = race3.Id;
+                            currentFusion.Race3 = race3;
+                            _logger.Info("Saving fusion " + currentFusion.ToString());
+                            _dbSession.Update(currentFusion);
+                            _logger.Info("Saved.");
+                        }
+                        else
+                        {
+                            currentFusion = new Domain.Fusion(race1, race2, race3);
+                            _logger.Info("Creating new fusion " + currentFusion.ToString());
+                            _dbSession.Save(currentFusion);
+                            _logger.Info("Created.");
+                        }
+                        
+                        transaction.Commit();
+                        _logger.Info("Fusion saved.");
+                    }
+                    
                 }
 
                 _logger.CloseSection(location);
