@@ -63,13 +63,11 @@ namespace Yatagarasu
 
                 var currentGameRaces = game.Races.ToList();
                 var currentGameRaceIds = currentGameRaces.Select(x => x.Id).ToList();
-                var allFusionsInAllGames = 
-                    _dbSession.CreateCriteria<Domain.Fusion>().List<Domain.Fusion>();
-
-                var allFusions = allFusionsInAllGames
-                    .Where(x => currentGameRaceIds.Contains(x.FusionIdentifier.IdRace1))
-                    .OrderBy(y => y.FusionIdentifier.IdRace1)
-                    .ThenBy(z => z.FusionIdentifier.IdRace2).ToList();
+                var allFusions =
+                    _dbSession.CreateCriteria<Domain.Fusion>().List<Domain.Fusion>()
+                    .Where(x => currentGameRaceIds.Contains(x.IdRace1))
+                    .OrderBy(y => y.IdRace1)
+                    .ThenBy(z => z.IdRace2).ToList();
 
                 AddOneColumn(null);
                 foreach (var oneRace in currentGameRaces) AddOneColumn(oneRace);
@@ -97,11 +95,23 @@ namespace Yatagarasu
                         });
                     foreach (var anotherRace in currentGameRaces)
                     {
-                        Domain.Race raceResult =
+                        int? idRaceResult =
                             allFusions.Where(x =>
-                                x.FusionIdentifier.IdRace1 == oneRace.Id &&
-                                x.FusionIdentifier.IdRace2 == anotherRace.Id)
-                                .Select(y => y.Race3).FirstOrDefault();
+                                x.IdRace1 == oneRace.Id &&
+                                x.IdRace2 == anotherRace.Id)
+                                .Select(y => y.IdRace3).FirstOrDefault();
+                        if (idRaceResult == null)
+                        {
+                            idRaceResult =
+                            allFusions.Where(x =>
+                                x.IdRace2 == oneRace.Id &&
+                                x.IdRace1 == anotherRace.Id)
+                                .Select(y => y.IdRace3).FirstOrDefault();
+                        }
+                        Domain.Race raceResult =
+                            (idRaceResult == null ? null :
+                            _dbSession.Get<Domain.Race>(idRaceResult.GetValueOrDefault()));
+
                         oneDgvr.Cells.Add(new DataGridViewTextBoxCell()
                         {
                             Value = (raceResult == null ? null : raceResult.Name),
@@ -125,10 +135,43 @@ namespace Yatagarasu
 
                 AddHandlers();
                 _logger.Info("Adding complete.");
+
+                SetFormats();
             }
             _logger.CloseSection(location);
         }
 
+        public void SetFormats()
+        {
+            string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
+            _logger.OpenSection(location);
+
+            var defaultStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            defaultStyle.Alignment = 
+                System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            defaultStyle.Font = 
+                new System.Drawing.Font("MS PGothic", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+
+            var notAvailableStyle = new System.Windows.Forms.DataGridViewCellStyle();
+            notAvailableStyle.Alignment = 
+                System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            notAvailableStyle.BackColor = 
+                System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+
+            
+            
+
+
+            foreach(DataGridViewTextBoxColumn oneColumn in this.dgvFusions.Columns)
+                oneColumn.DefaultCellStyle = defaultStyle;
+
+            foreach (DataGridViewRow oneRow in this.dgvFusions.Rows)
+                foreach (DataGridViewCell oneCell in oneRow.Cells)
+                    if (oneCell.Value != null && oneCell.Value.ToString() == GlobalObjects.ImpossibleToFuseRace.Name)
+                        oneCell.Style = notAvailableStyle;
+
+            _logger.CloseSection(location);
+        }
 
         public void RemoveHandlers()
         {
@@ -193,22 +236,28 @@ namespace Yatagarasu
                 Domain.Race race1 = this.dgvFusions.Rows[0].Cells[e.ColumnIndex].Tag as Domain.Race;
                 Domain.Race race2 = this.dgvFusions.Rows[e.RowIndex].Cells[0].Tag as Domain.Race;
                 var resultCell = this.dgvFusions.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                Domain.Race race3 =
-                    GlobalObjects.CurrentGame.Races.Where(x => x.Name == resultCell.Value.ToString()).FirstOrDefault();
 
-                if (race3 == null && resultCell.ToString() == GlobalObjects.ImpossibleToFuseRace.Name)
+                Domain.Race race3 = null;
+
+                if (resultCell.Value != null)
                 {
-                    race3 = GlobalObjects.ImpossibleToFuseRace;
+                    race3 = GlobalObjects.CurrentGame.Races.
+                        Where(x => x.Name == resultCell.Value.ToString()).FirstOrDefault();
+                    
+                    if (race3 == null && resultCell.ToString() == GlobalObjects.ImpossibleToFuseRace.Name)
+                    {
+                        race3 = GlobalObjects.ImpossibleToFuseRace;
+                    }
+
+                    if (race3 == null)
+                    {
+                        race3 = _dbSession.CreateCriteria<Domain.Race>().List<Domain.Race>()
+                            .Where(x => x.Name == resultCell.Value.ToString()).FirstOrDefault();
+                        if (race3 == null) race3 = GlobalObjects.InsertRaceMaybe(resultCell.ToString());
+                    }
                 }
 
-                if (race3 == null)
-                {
-                    race3 = _dbSession.CreateCriteria<Domain.Race>().List<Domain.Race>()
-                        .Where(x => x.Name == resultCell.Value.ToString()).FirstOrDefault();
-                    if (race3 == null) race3 = GlobalObjects.InsertRaceMaybe(resultCell.ToString());
-                }
-
-                if (race3 == null)
+                if (race3 == null && resultCell.Value != null)
                 {
                     _logger.Info("Insertion cancelled.");
                 }
@@ -216,36 +265,36 @@ namespace Yatagarasu
                 {
                     using (var transaction = _dbSession.BeginTransaction())
                     {
-                        allFusions = 
-                            _dbSession.CreateCriteria<Domain.Fusion>().List<Domain.Fusion>().ToList();
-                        List<Domain.Fusion> allFusions1 =
-                            _dbSession.CreateCriteria<Domain.Fusion>().List<Domain.Fusion>()
-                            .Where(x => x.FusionIdentifier.IdRace1 == race1.Id).ToList();
-                        List<Domain.Fusion> allFusions2 =
-                            _dbSession.CreateCriteria<Domain.Fusion>().List<Domain.Fusion>()
-                            .Where(x => x.FusionIdentifier.IdRace1 == race2.Id).ToList();
-
-                        var oneRace = _dbSession.Get<Domain.Race>(race1.Id);
 
                         var currentFusion =
                             _dbSession.CreateCriteria<Domain.Fusion>().List<Domain.Fusion>()
-                            .Where(x => x.FusionIdentifier.IdRace1 == race1.Id &&
-                            x.FusionIdentifier.IdRace2 == race2.Id).FirstOrDefault();
+                            .Where(x => x.IdRace1 == race2.Id && x.IdRace2 == race1.Id)
+                            .FirstOrDefault();
                         if (currentFusion == null)
                         {
-                            _dbSession.CreateCriteria<Domain.Fusion>().List<Domain.Fusion>()
-                            .Where(x => x.FusionIdentifier.IdRace1 == race2.Id &&
-                            x.FusionIdentifier.IdRace2 == race1.Id).FirstOrDefault();
+                            currentFusion = _dbSession.CreateCriteria<Domain.Fusion>().List<Domain.Fusion>()
+                            .Where(x => x.IdRace1 == race1.Id && x.IdRace2 == race2.Id)
+                            .FirstOrDefault();
                         }
+
                         if (currentFusion != null)
                         {
                             _logger.Info("Got fusion " + currentFusion.ToString());
-                            _logger.Info("Result of fusion will now be " + race3.ToString());
-                            currentFusion.IdRace3 = race3.Id;
-                            currentFusion.Race3 = race3;
-                            _logger.Info("Saving fusion " + currentFusion.ToString());
-                            _dbSession.Update(currentFusion);
-                            _logger.Info("Saved.");
+                            if (race3 != null)
+                            {
+                                _logger.Info("Result of fusion will now be " + race3.ToString());
+                                currentFusion.IdRace3 = race3.Id;
+                                _logger.Info("Saving fusion " + currentFusion.ToString());
+                                _dbSession.Update(currentFusion);
+                                _logger.Info("Saved.");
+                            }
+                            else
+                            {
+                                _logger.Info("Fusion will be deleted from database.");
+                                _dbSession.Delete(currentFusion);
+                                _logger.Info("Deleted.");
+                            }
+                            
                         }
                         else
                         {

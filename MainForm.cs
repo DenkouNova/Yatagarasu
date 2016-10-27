@@ -40,12 +40,13 @@ namespace Yatagarasu
             GlobalObjects.MainForm = this;
             GlobalObjects.CurrentGame = null;
 
+            
             ShowDemonsListForm();
             ShowPartyDemonsForm();
             ShowFusionsForm();
 
             ShowChooseGameForm();
-
+            
             _logger.CloseSection(location);
         }
 
