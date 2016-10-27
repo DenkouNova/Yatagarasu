@@ -9,7 +9,8 @@
     </id>
     <property name="Level" />
     <property name="Name" />
-
+    <property name="NumberInParty" />
+    
     <many-to-one name="Race" class="Race" column="IdRace"/>
   </class>
 

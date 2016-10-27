@@ -23,7 +23,8 @@ namespace Yatagarasu
         ISession _dbSession;
 
         ChooseGameForm _chooseGameForm;
-        DemonsListForm _demonsListForm, _partyDemonsForm;
+        DemonsListForm _demonsListForm;
+        PartyDemonsListForm _partyDemonsListForm;
         FusionsForm _fusionsForm;
 
         private const string FORM_NAME = "Yatagarasu";
@@ -70,6 +71,7 @@ namespace Yatagarasu
                 this.Text = text;
 
                 if (_demonsListForm != null) _demonsListForm.LoadData();
+                if (_partyDemonsListForm != null) _partyDemonsListForm.LoadData();
                 if (_fusionsForm != null) _fusionsForm.LoadData();
             }
 
@@ -100,7 +102,7 @@ namespace Yatagarasu
             if (_demonsListForm == null)
             {
                 _logger.Info("Form is null. Creating...");
-                _demonsListForm = new DemonsListForm(DemonsListForm.DemonsListMode.AllDemons);
+                _demonsListForm = new DemonsListForm();
                 _demonsListForm.MdiParent = this;
             }
             _logger.Info(_demonsListForm.Visible ? "Form is already visible." : "Showing form...");
@@ -113,14 +115,14 @@ namespace Yatagarasu
         {
             string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
             _logger.OpenSection(location);
-            if (_partyDemonsForm == null)
+            if (_partyDemonsListForm == null)
             {
                 _logger.Info("Form is null. Creating...");
-                _partyDemonsForm = new DemonsListForm(DemonsListForm.DemonsListMode.PartyDemons);
-                _partyDemonsForm.MdiParent = this;
+                _partyDemonsListForm = new PartyDemonsListForm();
+                _partyDemonsListForm.MdiParent = this;
             }
-            _logger.Info(_partyDemonsForm.Visible ? "Form is already visible." : "Showing form...");
-            if (!_partyDemonsForm.Visible) _partyDemonsForm.Show();
+            _logger.Info(_partyDemonsListForm.Visible ? "Form is already visible." : "Showing form...");
+            if (!_partyDemonsListForm.Visible) _partyDemonsListForm.Show();
             _logger.CloseSection(location);
         }
 

@@ -14,7 +14,7 @@ using NHibernate;
 
 namespace Yatagarasu
 {
-    public partial class DemonsListForm : Form
+    public partial class PartyDemonsListForm : Form
     {
         const int COLUMN_ID = 0;
         const int COLUMN_LEVEL = 1;
@@ -28,7 +28,7 @@ namespace Yatagarasu
 
         DataGridViewTextBoxColumn colId, colLevel, colRace, colName;
 
-        public DemonsListForm()
+        public PartyDemonsListForm()
         {
             _logger = GlobalObjects.Logger;
             string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
@@ -44,23 +44,19 @@ namespace Yatagarasu
             _logger.CloseSection(location);
         }
 
-
         private void InitializeColumnsAndStuff()
         {
-            this.colId = new System.Windows.Forms.DataGridViewTextBoxColumn()
-                { HeaderText = "Id", Name = "colId", Width = 70, ReadOnly = true };
-            this.colLevel = new System.Windows.Forms.DataGridViewTextBoxColumn()
-                { HeaderText = "Level", Name = "colLevel", Width = 80 };
-            this.colRace = new System.Windows.Forms.DataGridViewTextBoxColumn()
-                { HeaderText = "Race", Name = "colRace", Width = 120 };
-            this.colName = new System.Windows.Forms.DataGridViewTextBoxColumn()
-                { HeaderText = "Name", Name = "colName", Width = 240 };
+            this.colId = new System.Windows.Forms.DataGridViewTextBoxColumn() { HeaderText = "Id", Name = "colId", Width = 70, ReadOnly = true };
+            this.colLevel = new System.Windows.Forms.DataGridViewTextBoxColumn() { HeaderText = "Level", Name = "colLevel", Width = 80 };
+            this.colRace = new System.Windows.Forms.DataGridViewTextBoxColumn() { HeaderText = "Race", Name = "colRace", Width = 120 };
+            this.colName = new System.Windows.Forms.DataGridViewTextBoxColumn() { HeaderText = "Name", Name = "colName", Width = 240 };
 
             this.dgvDemons.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
             this.dgvDemons.AllowUserToResizeRows = false;
             this.dgvDemons.RowTemplate.Height = 40;
             this.dgvDemons.RowTemplate.MinimumHeight = 40;
-
+            this.dgvDemons.AllowUserToAddRows = true;
+            
             this.colLevel.DefaultCellStyle =
                 this.colRace.DefaultCellStyle =
                 this.colName.DefaultCellStyle =
@@ -81,7 +77,6 @@ namespace Yatagarasu
             // this.colRace.DataSource = racesList;
         }
 
-
         public void LoadData()
         {
             string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
@@ -98,14 +93,20 @@ namespace Yatagarasu
             }
             else
             {
-                _logger.Info("Game '" + game.Name + "' chosen; will load list of demons.");
-                var allDemons = GlobalObjects.CurrentGame.Races.SelectMany(x => x.Demons).
-                OrderBy(y => y.Level).ThenBy(z => z.Race.Id);
+                _logger.Info("Game '" + game.Name + "' chosen; will load list of demons in party.");
+                var allDemons = 
+                    GlobalObjects.CurrentGame.Races
+                    .SelectMany(x => x.Demons)
+                    .Where(y => y.NumberInParty.Value > 0)
+                    .OrderBy(y => y.Level).ThenBy(z => z.Race.Id);
                 _maxDemonId = allDemons.Select(x => x.Id).Max().GetValueOrDefault();
                 foreach (Domain.Demon d in allDemons)
                 {
                     _logger.Info("Loaded this demon: " + d.ToString());
-                    this.dgvDemons.Rows.Add(CreateRow(d));
+                    for (int i = 0; i < d.NumberInParty.Value; i++)
+                    {
+                        this.dgvDemons.Rows.Add(CreateRow(d));
+                    }     
                 }
                 _logger.Info("Data load complete. Adding event handlers...");
                 AddHandlers();
@@ -113,7 +114,6 @@ namespace Yatagarasu
             }
             _logger.CloseSection(location);
         }
-
 
         private void RemoveHandlers()
         {
@@ -132,7 +132,6 @@ namespace Yatagarasu
             this.dgvDemons.UserDeletingRow += new DataGridViewRowCancelEventHandler(this.dgvDemons_UserDeletingRow);
         }
 
-
         private object[] CreateRow(Domain.Demon d)
         {
             var returnObjectArray = new object[4];
@@ -149,7 +148,6 @@ namespace Yatagarasu
 
             return returnObjectArray;
         }
-
 
         private Domain.Demon GetDemonFromDataGridViewRow(DataGridViewRow dgvr, bool canInsertRace)
         {
@@ -184,8 +182,6 @@ namespace Yatagarasu
             }
             return returnDemon;
         }
-
-
 
 
         #region event handlers
@@ -289,13 +285,14 @@ namespace Yatagarasu
 
         private void dgvDemons_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
-            var deletedDemon = GetDemonFromDataGridViewRow(e.Row, false);
-            if (deletedDemon != null)
+            var demonToRemoveFromParty = GetDemonFromDataGridViewRow(e.Row, false);
+            if (demonToRemoveFromParty != null)
             {
                 using (var transaction = _dbSession.BeginTransaction())
                 {
-                    _logger.Info("Deleting demon: " + deletedDemon.ToString());
-                    _dbSession.Delete(deletedDemon);
+                    _logger.Info("Removing a demon from party: " + demonToRemoveFromParty.ToString());
+                    demonToRemoveFromParty.NumberInParty = demonToRemoveFromParty.NumberInParty.Value - 1;
+                    _dbSession.Update(demonToRemoveFromParty);
                     _logger.Info("Deleted.");
                     transaction.Commit();
                 }
@@ -303,7 +300,7 @@ namespace Yatagarasu
         }
 
 
-        private void DemonsListForm_FormClosing(object sender, FormClosingEventArgs e)
+        private void PartyDemonsListForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing)
             {
@@ -312,12 +309,6 @@ namespace Yatagarasu
             }
         }
         #endregion
-
-
-
-
-
-
 
     }
 }
