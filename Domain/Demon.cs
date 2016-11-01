@@ -9,27 +9,17 @@ namespace Yatagarasu.Domain
 
     public class Demon
     {
-        private int numberInParty;
-
         public Demon() { Id = null; }
 
         public virtual int? Id { get; set; }
 
         public virtual int Level { get; set; }
 
-        public virtual int? NumberInParty
-        {
-            get
-            {
-                return numberInParty;
-            }
-            set
-            {
-                numberInParty = value == null ?
-                    0 :
-                    numberInParty = value.Value;
-            }
-        }
+        public virtual int InParty { get; set; }
+
+        public virtual int UseInFusionCalculator { get; set; }
+
+        public virtual bool UseInFusionCalculatorBoolean { get { return UseInFusionCalculator > 0; } }
 
         public virtual string Name { get; set; }
 

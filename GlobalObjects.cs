@@ -75,7 +75,7 @@ namespace Yatagarasu
         }
 
 
-        public static DataGridViewCellStyle GetDefaultDgvcStyle(float fontSize, bool enabled = true)
+        public static DataGridViewCellStyle GetDefaultDgvcStyle(float fontSize, bool enabled = true, bool inParty = false)
         {
             var returnStyle = new DataGridViewCellStyle()
             {
@@ -88,6 +88,8 @@ namespace Yatagarasu
             };
             
             if (!enabled) returnStyle.BackColor = SystemColors.ControlLight;
+            if (inParty) returnStyle.BackColor = Color.LightGreen;
+
             return returnStyle;
         }
 

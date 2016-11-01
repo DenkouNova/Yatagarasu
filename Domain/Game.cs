@@ -16,6 +16,16 @@ namespace Yatagarasu.Domain
 
         public virtual int Year { get; set; }
 
+        protected virtual int AcceptsMultiDemon { get; set; }
+
+        public virtual bool AcceptsMultiDemonBoolean
+        {
+            get
+            {
+                return AcceptsMultiDemon > 0;
+            }
+        }
+
         private ISet<Race> races = new HashSet<Race>();
         public virtual ISet<Race> Races
         {

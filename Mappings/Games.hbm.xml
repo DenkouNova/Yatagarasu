@@ -9,6 +9,7 @@
     </id>
     <property name="Name" />
     <property name="Year" />
+    <property name="AcceptsMultiDemon" />
     <set name="Races" inverse="true">
       <key>
         <column name="IdGame"/>
