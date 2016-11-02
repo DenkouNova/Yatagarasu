@@ -26,6 +26,7 @@ namespace Yatagarasu
         ISession _dbSession;
         int _maxDemonId;
         bool _cellChanged = false;
+        bool _addingRow = false;
 
         DataGridViewCheckBoxColumn colInParty;
         DataGridViewTextBoxColumn colId, colLevel, colRace, colName;
@@ -92,7 +93,7 @@ namespace Yatagarasu
             this.dgvDemons.Enabled = (game != null);
             if (game == null)
             {
-                _logger.Info("No data to load; no game game is chosen.");
+                _logger.Info("No data to load; no game is chosen.");
                 this.dgvDemons.Rows.Clear();
             }
             else
@@ -149,6 +150,7 @@ namespace Yatagarasu
             this.dgvDemons.CellValidating -= new DataGridViewCellValidatingEventHandler(dgvDemons_CellValidating);
             this.dgvDemons.CellValueChanged -= new DataGridViewCellEventHandler(dgvDemons_CellValueChanged);
             this.dgvDemons.UserDeletingRow -= new DataGridViewRowCancelEventHandler(this.dgvDemons_UserDeletingRow);
+            this.dgvDemons.RowsAdded -= new DataGridViewRowsAddedEventHandler(this.dgvDemons_RowsAdded);
         }
 
 
@@ -158,6 +160,7 @@ namespace Yatagarasu
             this.dgvDemons.CellValidating += new DataGridViewCellValidatingEventHandler(dgvDemons_CellValidating);
             this.dgvDemons.CellValueChanged += new DataGridViewCellEventHandler(dgvDemons_CellValueChanged);
             this.dgvDemons.UserDeletingRow += new DataGridViewRowCancelEventHandler(this.dgvDemons_UserDeletingRow);
+            this.dgvDemons.RowsAdded += new DataGridViewRowsAddedEventHandler(this.dgvDemons_RowsAdded);
         }
 
         private object[] CreateRow(Domain.Demon d)
@@ -196,6 +199,12 @@ namespace Yatagarasu
 
 
         #region event handlers
+        private void dgvDemons_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+            _addingRow = true;
+        }
+
+
         private void dgvDemons_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
             string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
@@ -269,6 +278,11 @@ namespace Yatagarasu
                     transaction.Commit();
                 } // using (var transaction = _dbSession.BeginTransaction())
 
+                if (_addingRow)
+                {
+                    _addingRow = false;
+                    GlobalObjects.MainForm.UpdateFusions();
+                }
                 _logger.CloseSection(location);
             }
         }

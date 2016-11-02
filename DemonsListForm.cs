@@ -47,13 +47,13 @@ namespace Yatagarasu
 
         private void InitializeColumnsAndStuff()
         {
-            this.colId = new System.Windows.Forms.DataGridViewTextBoxColumn()
+            this.colId = new DataGridViewTextBoxColumn()
                 { HeaderText = "Id", Name = "colId", Width = 70, ReadOnly = true };
-            this.colLevel = new System.Windows.Forms.DataGridViewTextBoxColumn()
+            this.colLevel = new DataGridViewTextBoxColumn()
                 { HeaderText = "Level", Name = "colLevel", Width = 80 };
-            this.colRace = new System.Windows.Forms.DataGridViewTextBoxColumn()
+            this.colRace = new DataGridViewTextBoxColumn()
                 { HeaderText = "Race", Name = "colRace", Width = 120 };
-            this.colName = new System.Windows.Forms.DataGridViewTextBoxColumn()
+            this.colName = new DataGridViewTextBoxColumn()
                 { HeaderText = "Name", Name = "colName", Width = 240 };
 
             this.dgvDemons.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
@@ -93,7 +93,7 @@ namespace Yatagarasu
             this.dgvDemons.Enabled = (game != null);
             if (game == null)
             {
-                _logger.Info("No data to load; no game game is chosen.");
+                _logger.Info("No data to load; no game is chosen.");
                 this.dgvDemons.Rows.Clear();
             }
             else

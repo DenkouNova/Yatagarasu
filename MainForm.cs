@@ -26,6 +26,7 @@ namespace Yatagarasu
         DemonsListForm _demonsListForm;
         PartyDemonsListForm _partyDemonsListForm;
         FusionsForm _fusionsForm;
+        PartyFusionsVerticalForm _partyFusionsVerticalForm;
 
         private const string FORM_NAME = "Yatagarasu";
 
@@ -45,6 +46,7 @@ namespace Yatagarasu
             ShowDemonsListForm();
             ShowPartyDemonsForm();
             ShowFusionsForm();
+            ShowPartyFusionsVerticalForm();
 
             ShowChooseGameForm();
             
@@ -73,9 +75,21 @@ namespace Yatagarasu
                 if (_demonsListForm != null) _demonsListForm.LoadData();
                 if (_partyDemonsListForm != null) _partyDemonsListForm.LoadData();
                 if (_fusionsForm != null) _fusionsForm.LoadData();
+                if (_partyFusionsVerticalForm != null) _partyFusionsVerticalForm.LoadData(); 
             }
 
             _logger.CloseSection(location);
+        }
+
+
+        public void UpdateFusions()
+        {
+            if (_partyFusionsVerticalForm != null)
+            {
+                _partyFusionsVerticalForm.Visible = true;
+                _partyFusionsVerticalForm.btnReload.BackColor = Color.LightGreen;
+                _partyFusionsVerticalForm.Refresh();
+            }
         }
 
 
@@ -139,6 +153,23 @@ namespace Yatagarasu
             }
             _logger.Info(_fusionsForm.Visible ? "Form is already visible." : "Showing form...");
             if (!_fusionsForm.Visible) _fusionsForm.Show();
+            _logger.CloseSection(location);
+        }
+
+
+        private void ShowPartyFusionsVerticalForm()
+        {
+            string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
+            _logger.OpenSection(location);
+            if (_partyFusionsVerticalForm == null)
+            {
+                _logger.Info("Form is null. Creating...");
+                _partyFusionsVerticalForm = new PartyFusionsVerticalForm();
+                _partyFusionsVerticalForm.MdiParent = this;
+            }
+            _logger.Info(_partyFusionsVerticalForm.Visible ? 
+                "Form is already visible." : "Showing form...");
+            if (!_partyFusionsVerticalForm.Visible) _partyFusionsVerticalForm.Show();
             _logger.CloseSection(location);
         }
 

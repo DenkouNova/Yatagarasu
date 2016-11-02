@@ -108,6 +108,7 @@
     <Compile Include="Domain\Fusion.cs" />
     <Compile Include="Domain\Game.cs" />
     <Compile Include="Domain\Race.cs" />
+    <Compile Include="FusionObject.cs" />
     <Compile Include="FusionsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -128,6 +129,12 @@
     <Compile Include="PartyDemonsListForm.Designer.cs">
       <DependentUpon>PartyDemonsListForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="PartyFusionsVerticalForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PartyFusionsVerticalForm.Designer.cs">
+      <DependentUpon>PartyFusionsVerticalForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="ChooseGameForm.resx">
@@ -144,6 +151,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="PartyDemonsListForm.resx">
       <DependentUpon>PartyDemonsListForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PartyFusionsVerticalForm.resx">
+      <DependentUpon>PartyFusionsVerticalForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

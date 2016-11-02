@@ -54,7 +54,7 @@ namespace Yatagarasu
             this.dgvFusions.Enabled = (game != null);
             if (game == null)
             {
-                _logger.Info("No data to load; no game game is chosen.");
+                _logger.Info("No data to load; no game is chosen.");
                 this.dgvFusions.Rows.Clear();
             }
             else
@@ -190,7 +190,7 @@ namespace Yatagarasu
         private void AddOneColumn(Domain.Race oneRace)
         {
             string raceName = (oneRace == null ? "" : oneRace.Name);
-            var oneColumn = new System.Windows.Forms.DataGridViewTextBoxColumn() {
+            var oneColumn = new DataGridViewTextBoxColumn() {
                 HeaderText = raceName,
                 Name = "col" + raceName,
                 Width = 60,
