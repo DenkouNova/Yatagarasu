@@ -11,10 +11,10 @@ namespace Yatagarasu
 {
     class FusionObject
     {
-        private Domain.Demon _demon1;
-        private Domain.Demon _demon2;
-        private Domain.Demon _demon3;
-        private Domain.Fusion _fusion;
+        public Domain.Demon _demon1 { get; set; }
+        public Domain.Demon _demon2 { get; set; }
+        public Domain.Demon _demon3 { get; set; }
+        public Domain.Fusion _fusion { get; set; }
         private bool _fusionIsImpossible = false;
 
         FeatherLogger _logger;
@@ -51,7 +51,7 @@ namespace Yatagarasu
                     returnDemon = _dbSession.CreateCriteria<Domain.Demon>().List<Domain.Demon>()
                     .Where(x =>
                         x.Race.Id == f.IdRace3 &&
-                        x.Level >= (d1.Level + d2.Level) / 2)
+                        x.Level > (d1.Level + d2.Level) / 2)
                     .OrderBy(x => x.Level)
                     .FirstOrDefault();
                 }

@@ -133,8 +133,8 @@ namespace Yatagarasu
                 var inParty = this.dgvDemons.Rows[i].Cells[COLUMN_IN_PARTY].Value;
                 this.dgvDemons.Rows[i].DefaultCellStyle.BackColor = 
                     inParty != null && (bool)inParty ?
-                    Color.PaleGreen :
-                    SystemColors.ControlLight;
+                    GlobalObjects.InPartyCell :
+                    GlobalObjects.CannotEditCell;
                 this.dgvDemons.Rows[i].Cells[COLUMN_ID].ReadOnly = true;
                 this.dgvDemons.Rows[i].Cells[COLUMN_LEVEL].ReadOnly = true;
                 this.dgvDemons.Rows[i].Cells[COLUMN_RACE].ReadOnly = true;

@@ -46,8 +46,6 @@ namespace Yatagarasu
 
             InitializeColumnsAndStuff();
 
-            this.btnReload.Visible = false;
-
             LoadData();
 
             _logger.CloseSection(location);
@@ -102,7 +100,7 @@ namespace Yatagarasu
             string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
             _logger.OpenSection(location);
 
-            //RemoveHandlers();
+            RemoveHandlers();
 
             var game = GlobalObjects.CurrentGame;
             this.dgvPartyFusions.Enabled = (game != null);
@@ -113,7 +111,8 @@ namespace Yatagarasu
             }
             else
             {
-                _logger.Info("Game '" + game.Name + "' chosen; will load fusions for demons in .");
+                _logger.Info("Game '" + game.Name + "' chosen; will load fusions for demons.");
+                this.dgvPartyFusions.Rows.Clear();
                 var demonsForFusions = GlobalObjects.CurrentGame.Races.SelectMany(x => x.Demons).
                     Where(y => y.UseInFusionCalculatorBoolean).ToList();
                 for (int i = 0; i < demonsForFusions.Count; i++)
@@ -134,14 +133,36 @@ namespace Yatagarasu
                             var oneFusionObject = new FusionObject
                                 (demonsForFusions[i], demonsForFusions[j], oneFusion);
                             this.dgvPartyFusions.Rows.Add(oneFusionObject.ToDataRow());
+
+                            this.dgvPartyFusions.Rows[this.dgvPartyFusions.Rows.Count - 1].Cells[0].Style.BackColor =
+                                this.dgvPartyFusions.Rows[this.dgvPartyFusions.Rows.Count - 1].Cells[1].Style.BackColor =
+                                this.dgvPartyFusions.Rows[this.dgvPartyFusions.Rows.Count - 1].Cells[2].Style.BackColor =
+                                oneFusionObject._demon1.InParty == 1 ?
+                                GlobalObjects.InPartyCell :
+                                GlobalObjects.DefaultCell;
+
+                            this.dgvPartyFusions.Rows[this.dgvPartyFusions.Rows.Count - 1].Cells[3].Style.BackColor =
+                                this.dgvPartyFusions.Rows[this.dgvPartyFusions.Rows.Count - 1].Cells[4].Style.BackColor =
+                                this.dgvPartyFusions.Rows[this.dgvPartyFusions.Rows.Count - 1].Cells[5].Style.BackColor =
+                                oneFusionObject._demon2.InParty == 1 ?
+                                GlobalObjects.InPartyCell :
+                                GlobalObjects.DefaultCell;
+
+                            this.dgvPartyFusions.Rows[this.dgvPartyFusions.Rows.Count - 1].Cells[6].Style.BackColor =
+                                this.dgvPartyFusions.Rows[this.dgvPartyFusions.Rows.Count - 1].Cells[7].Style.BackColor =
+                                this.dgvPartyFusions.Rows[this.dgvPartyFusions.Rows.Count-1].Cells[8].Style.BackColor =
+                                oneFusionObject._demon3.InParty == 1 ?
+                                GlobalObjects.InPartyCell :
+                                GlobalObjects.DefaultCell;
                         }
                         
                     }
                 }
-                ReorderTable();
+                //ReorderTable();
             }
+            this.dgvPartyFusions.ClearSelection();
             _logger.Info("Adding complete.");
-            //AddHandlers();
+            AddHandlers();
             _logger.CloseSection(location);
         }
 
@@ -151,16 +172,32 @@ namespace Yatagarasu
         {
             if (this.dgvPartyFusions.Rows.Count > 0)
             {
-                this.dgvPartyFusions.Sort(colLevel1, ListSortDirection.Ascending);
-                this.dgvPartyFusions.Sort(colLevel2, ListSortDirection.Ascending);
+                //this.dgvPartyFusions.Sort(colLevel1, ListSortDirection.Ascending);
+                //this.dgvPartyFusions.Sort(colLevel2, ListSortDirection.Ascending);
                 this.dgvPartyFusions.Sort(colLevel3, ListSortDirection.Descending);
             }
         }
 
-        private void btnReload_Click(object sender, EventArgs e)
+        private void AddHandlers()
         {
-            this.btnReload.Visible = false;
-            this.LoadData();
+            this.dgvPartyFusions.SelectionChanged += 
+                new EventHandler(this.dgvPartyFusions_SelectionChanged);
+
+        }
+
+        private void RemoveHandlers()
+        {
+            this.dgvPartyFusions.SelectionChanged -=
+                new EventHandler(this.dgvPartyFusions_SelectionChanged);
+        }
+
+        private void dgvPartyFusions_SelectionChanged(object sender, EventArgs e)
+        {
+            if (this.dgvPartyFusions.SelectedRows.Count == this.dgvPartyFusions.Rows.Count)
+            {
+                LoadData();
+            }
+
         }
 
     }

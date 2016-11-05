@@ -84,10 +84,9 @@ namespace Yatagarasu
 
         public void UpdateFusions()
         {
-            if (_partyFusionsVerticalForm != null)
+            if (GlobalObjects.AUTOMATIC_UPDATE_OF_PARTY_FUSIONS && _partyFusionsVerticalForm != null)
             {
                 _partyFusionsVerticalForm.Visible = true;
-                _partyFusionsVerticalForm.btnReload.BackColor = Color.LightGreen;
                 _partyFusionsVerticalForm.Refresh();
             }
         }

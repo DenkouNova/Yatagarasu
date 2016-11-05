@@ -17,10 +17,16 @@ namespace Yatagarasu
 {
     public class GlobalObjects
     {
+        public static Color InPartyCell = Color.FromArgb(209, 248, 171);
+        public static Color CannotEditCell = SystemColors.ControlLight;
+        public static Color DefaultCell = SystemColors.Window;
+
         private static FeatherLogger _logger = null;
         private static ISession _dbSession = null;
         private static Domain.Game _game = null;
-        
+
+        public static bool AUTOMATIC_UPDATE_OF_PARTY_FUSIONS = false;
+
         public static MainForm MainForm { get; set; }
 
         public static FeatherLogger Logger 

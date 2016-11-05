@@ -179,6 +179,7 @@
   <ItemGroup>
     <EmbeddedResource Include="hibernate.cfg.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Mappings\Games.hbm.xml" />
   </ItemGroup>

@@ -48,7 +48,8 @@ namespace Yatagarasu.Domain
             return "Id = " + FeatherStrings.TraceString(Id) +
                 ", " + "Level = " + FeatherStrings.TraceString(Level) +
                 ", " + "Name = " + FeatherStrings.TraceString(Name) + 
-                ", " + "Race = " + FeatherStrings.TraceString(Race.Name);
+                ", " + "Race = " + FeatherStrings.TraceString(Race.Name) + 
+                ", " + "InParty = " + FeatherStrings.TraceString(InParty);
         }
     }
 }
