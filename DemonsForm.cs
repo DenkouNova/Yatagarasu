@@ -14,7 +14,7 @@ using NHibernate;
 
 namespace Yatagarasu
 {
-    public partial class PartyDemonsListForm : Form
+    public partial class DemonsForm : Form
     {
         const int COLUMN_ID = 0;
         const int COLUMN_IN_PARTY = 1;
@@ -31,7 +31,7 @@ namespace Yatagarasu
         DataGridViewCheckBoxColumn colInParty;
         DataGridViewTextBoxColumn colId, colLevel, colRace, colName;
 
-        public PartyDemonsListForm()
+        public DemonsForm()
         {
             _logger = GlobalObjects.Logger;
             string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;

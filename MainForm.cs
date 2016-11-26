@@ -24,8 +24,8 @@ namespace Yatagarasu
 
         ChooseGameForm _chooseGameForm;
         DemonsListForm _demonsListForm;
-        PartyDemonsListForm _partyDemonsListForm;
-        FusionsForm _fusionsForm;
+        DemonsForm _partyDemonsListForm;
+        FusionsChartForm _fusionsForm;
         PartyFusionsVerticalForm _partyFusionsVerticalForm;
 
         private const string FORM_NAME = "Yatagarasu";
@@ -131,7 +131,7 @@ namespace Yatagarasu
             if (_partyDemonsListForm == null)
             {
                 _logger.Info("Form is null. Creating...");
-                _partyDemonsListForm = new PartyDemonsListForm();
+                _partyDemonsListForm = new DemonsForm();
                 _partyDemonsListForm.MdiParent = this;
             }
             _logger.Info(_partyDemonsListForm.Visible ? "Form is already visible." : "Showing form...");
@@ -147,7 +147,7 @@ namespace Yatagarasu
             if (_fusionsForm == null)
             {
                 _logger.Info("Form is null. Creating...");
-                _fusionsForm = new FusionsForm();
+                _fusionsForm = new FusionsChartForm();
                 _fusionsForm.MdiParent = this;
             }
             _logger.Info(_fusionsForm.Visible ? "Form is already visible." : "Showing form...");

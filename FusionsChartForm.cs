@@ -14,7 +14,7 @@ using NHibernate;
 
 namespace Yatagarasu
 {
-    public partial class FusionsForm : Form
+    public partial class FusionsChartForm : Form
     {
         FeatherLogger _logger;
         ISession _dbSession;
@@ -22,7 +22,7 @@ namespace Yatagarasu
 
         private const int FONT_SIZE = 12;
 
-        public FusionsForm()
+        public FusionsChartForm()
         {
             _logger = GlobalObjects.Logger;
             string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;

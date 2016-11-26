@@ -1,6 +1,6 @@
 ﻿namespace Yatagarasu
 {
-    partial class PartyDemonsListForm
+    partial class DemonsForm
     {
         /// <summary>
         /// Required designer variable.
@@ -42,14 +42,14 @@
             this.dgvDemons.Size = new System.Drawing.Size(589, 517);
             this.dgvDemons.TabIndex = 1;
             // 
-            // PartyDemonsListForm
+            // DemonsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(589, 517);
             this.Controls.Add(this.dgvDemons);
-            this.Name = "PartyDemonsListForm";
-            this.Text = "PartyDemonsListForm";
+            this.Name = "DemonsForm";
+            this.Text = "Demons";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PartyDemonsListForm_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.dgvDemons)).EndInit();
             this.ResumeLayout(false);

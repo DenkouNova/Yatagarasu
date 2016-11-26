@@ -1,6 +1,6 @@
 ﻿namespace Yatagarasu
 {
-    partial class FusionsForm
+    partial class FusionsChartForm
     {
         /// <summary>
         /// Required designer variable.
@@ -51,7 +51,7 @@
             this.ClientSize = new System.Drawing.Size(1339, 667);
             this.Controls.Add(this.dgvFusions);
             this.Name = "FusionsForm";
-            this.Text = "Fusions";
+            this.Text = "Fusions Chart";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FusionsForm_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.dgvFusions)).EndInit();
             this.ResumeLayout(false);

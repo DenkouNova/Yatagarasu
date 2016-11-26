@@ -151,14 +151,14 @@ namespace Yatagarasu
                             this.dgvPartyFusions.Rows[this.dgvPartyFusions.Rows.Count - 1].Cells[6].Style.BackColor =
                                 this.dgvPartyFusions.Rows[this.dgvPartyFusions.Rows.Count - 1].Cells[7].Style.BackColor =
                                 this.dgvPartyFusions.Rows[this.dgvPartyFusions.Rows.Count-1].Cells[8].Style.BackColor =
-                                oneFusionObject._demon3.InParty == 1 ?
+                                oneFusionObject._demon3 != null && oneFusionObject._demon3.InParty == 1 ?
                                 GlobalObjects.InPartyCell :
                                 GlobalObjects.DefaultCell;
                         }
                         
                     }
                 }
-                //ReorderTable();
+                ReorderTable();
             }
             this.dgvPartyFusions.ClearSelection();
             _logger.Info("Adding complete.");
@@ -174,6 +174,7 @@ namespace Yatagarasu
             {
                 //this.dgvPartyFusions.Sort(colLevel1, ListSortDirection.Ascending);
                 //this.dgvPartyFusions.Sort(colLevel2, ListSortDirection.Ascending);
+                this.dgvPartyFusions.Sort(colName3, ListSortDirection.Ascending);
                 this.dgvPartyFusions.Sort(colLevel3, ListSortDirection.Descending);
             }
         }
