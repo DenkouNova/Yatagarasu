@@ -14,7 +14,7 @@ using NHibernate;
 
 namespace Yatagarasu
 {
-    public partial class DemonsListForm : Form
+    public partial class FullDemonsListForm : Form
     {
         const int COLUMN_ID = 0;
         const int COLUMN_LEVEL = 1;
@@ -28,7 +28,7 @@ namespace Yatagarasu
 
         DataGridViewTextBoxColumn colId, colLevel, colRace, colName;
 
-        public DemonsListForm()
+        public FullDemonsListForm()
         {
             _logger = GlobalObjects.Logger;
             string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;

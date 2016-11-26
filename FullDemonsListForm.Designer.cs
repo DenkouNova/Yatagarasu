@@ -1,6 +1,6 @@
 ﻿namespace Yatagarasu
 {
-    partial class DemonsListForm
+    partial class FullDemonsListForm
     {
         /// <summary>
         /// Required designer variable.

@@ -23,7 +23,7 @@ namespace Yatagarasu
         ISession _dbSession;
 
         ChooseGameForm _chooseGameForm;
-        DemonsListForm _demonsListForm;
+        FullDemonsListForm _demonsListForm;
         DemonsForm _partyDemonsListForm;
         FusionsChartForm _fusionsForm;
         PartyFusionsVerticalForm _partyFusionsVerticalForm;
@@ -115,7 +115,7 @@ namespace Yatagarasu
             if (_demonsListForm == null)
             {
                 _logger.Info("Form is null. Creating...");
-                _demonsListForm = new DemonsListForm();
+                _demonsListForm = new FullDemonsListForm();
                 _demonsListForm.MdiParent = this;
             }
             _logger.Info(_demonsListForm.Visible ? "Form is already visible." : "Showing form...");
