@@ -16,20 +16,24 @@ namespace Yatagarasu
 {
     public partial class FullDemonsListForm : Form
     {
-        const int COLUMN_ID = 0;
-        const int COLUMN_USE_IN_FUSIONS = 1;
-        const int COLUMN_IN_PARTY = 2;
-        const int COLUMN_LEVEL = 3;
-        const int COLUMN_RACE = 4;
-        const int COLUMN_NAME = 5;
-
         FeatherLogger _logger;
         ISession _dbSession;
-        int _maxDemonId;
         bool _cellChanged = false;
 
         DataGridViewCheckBoxColumn colUseInFusions, colInParty;
-        DataGridViewTextBoxColumn colId, colLevel, colRace, colName;
+        DataGridViewTextBoxColumn colObject, colId, colLevel, colRace, colName;
+
+        // Columns declared in the order the appear
+        enum MyDataGridColumns
+        {
+            columnObject,
+            columnId,
+            columnUseInFusions,
+            columnInParty,
+            columnLevel,
+            columnRace,
+            columnName
+        }
 
         public FullDemonsListForm()
         {
@@ -42,31 +46,70 @@ namespace Yatagarasu
 
             InitializeColumnsAndStuff();
 
-            LoadData();
-
             _logger.CloseSection(location);
         }
 
 
         private void InitializeColumnsAndStuff()
         {
+            List<DataGridViewColumn> listOfColumns = new List<DataGridViewColumn>();
+
             this.colInParty = new DataGridViewCheckBoxColumn {
-                HeaderText = "InParty",
+                HeaderText = "Party",
                 Name = "colInParty",
-                Width = 50 };
+                Width = 40,
+                Tag = MyDataGridColumns.columnInParty
+            };
+            listOfColumns.Add(colInParty);
+
             this.colUseInFusions = new DataGridViewCheckBoxColumn {
                 HeaderText = "Fuse",
                 Name = "colUseInFusions",
-                Width = 50 };
+                Width = 40,
+                Tag = MyDataGridColumns.columnUseInFusions
+            };
+            listOfColumns.Add(colUseInFusions);
 
-            this.colId = new DataGridViewTextBoxColumn()
-                { HeaderText = "Id", Name = "colId", Width = 70, ReadOnly = true };
-            this.colLevel = new DataGridViewTextBoxColumn()
-                { HeaderText = "Level", Name = "colLevel", Width = 80 };
-            this.colRace = new DataGridViewTextBoxColumn()
-                { HeaderText = "Race", Name = "colRace", Width = 120 };
-            this.colName = new DataGridViewTextBoxColumn()
-                { HeaderText = "Name", Name = "colName", Width = 240 };
+            this.colObject = new DataGridViewTextBoxColumn() {
+                HeaderText = "Object",
+                Name = "colObject",
+                Visible = false,
+                Tag = MyDataGridColumns.columnObject
+            };
+            listOfColumns.Add(colObject);
+
+            this.colId = new DataGridViewTextBoxColumn() {
+                HeaderText = "Id",
+                Name = "colId",
+                Width = 45,
+                ReadOnly = true,
+                Tag = MyDataGridColumns.columnId
+            };
+            listOfColumns.Add(colId);
+
+            this.colLevel = new DataGridViewTextBoxColumn() {
+                HeaderText = "Level",
+                Name = "colLevel",
+                Width = 55,
+                Tag = MyDataGridColumns.columnLevel
+            };
+            listOfColumns.Add(colLevel);
+
+            this.colRace = new DataGridViewTextBoxColumn() {
+                HeaderText = "Race",
+                Name = "colRace",
+                Width = 85,
+                Tag = MyDataGridColumns.columnRace
+            };
+            listOfColumns.Add(colRace);
+
+            this.colName = new DataGridViewTextBoxColumn() {
+                HeaderText = "Name",
+                Name = "colName",
+                Width = 250,
+                Tag = MyDataGridColumns.columnName
+            };
+            listOfColumns.Add(colName);
 
             this.dgvDemons.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
             this.dgvDemons.AllowUserToResizeRows = false;
@@ -81,13 +124,10 @@ namespace Yatagarasu
             this.colId.DefaultCellStyle =
                 GlobalObjects.GetDefaultDgvcStyle(16, false);
 
-            this.dgvDemons.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-				this.colId,
-                this.colUseInFusions,
-                this.colInParty,
-				this.colLevel,
-				this.colRace,
-				this.colName});
+            foreach (MyDataGridColumns oneColumnType in Enum.GetValues(typeof(MyDataGridColumns)))
+                foreach(DataGridViewColumn oneColumnToAdd in listOfColumns)
+                    if (((MyDataGridColumns)oneColumnToAdd.Tag) == oneColumnType)
+                        this.dgvDemons.Columns.Add(oneColumnToAdd);
 
             // for the eventual combobox
             // var racesList = new List<FeatherItem>();
@@ -115,7 +155,6 @@ namespace Yatagarasu
                 _logger.Info("Game '" + game.Name + "' chosen; will load list of demons.");
                 var allDemons = GlobalObjects.CurrentGame.Races.SelectMany(x => x.Demons).
                     OrderBy(y => y.Level).ThenBy(z => z.Race.Id).ToList();
-                _maxDemonId = allDemons.Select(x => x.Id).Max().GetValueOrDefault();
                 foreach (Domain.Demon d in allDemons)
                 {
                     _logger.Info("Loaded this demon: " + d.ToString());
@@ -129,33 +168,54 @@ namespace Yatagarasu
         }
 
 
-        private void RemoveHandlers()
+        private Domain.Demon GetDemonFromDataGridViewRow(DataGridViewRow dgvr, bool canInsertRace)
         {
-            _logger.Info(this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name);
-            this.dgvDemons.CellValidating -= new DataGridViewCellValidatingEventHandler(dgvDemons_CellValidating);
-            this.dgvDemons.CellValueChanged -= new DataGridViewCellEventHandler(dgvDemons_CellValueChanged);
-            this.dgvDemons.UserDeletingRow -= new DataGridViewRowCancelEventHandler(this.dgvDemons_UserDeletingRow);
-        }
+            Domain.Demon returnDemon = null;
 
+            if (dgvr.Cells[(int)MyDataGridColumns.columnObject].Value != null)
+            {
+                // Selecting / updating demon
+                returnDemon = (Domain.Demon)dgvr.Cells[(int)MyDataGridColumns.columnObject].Value;
+            }
+            else
+            {
+                // Inserting new demon
+                object idValue = dgvr.Cells[(int)MyDataGridColumns.columnId].Value;
+                object levelValue = dgvr.Cells[(int)MyDataGridColumns.columnLevel].Value;
+                object nameValue = dgvr.Cells[(int)MyDataGridColumns.columnName].Value;
+                object raceValue = dgvr.Cells[(int)MyDataGridColumns.columnRace].Value;
 
-        private void AddHandlers()
-        {
-            _logger.Info(this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name);
-            this.dgvDemons.CellValidating += new DataGridViewCellValidatingEventHandler(dgvDemons_CellValidating);
-            this.dgvDemons.CellValueChanged += new DataGridViewCellEventHandler(dgvDemons_CellValueChanged);
-            this.dgvDemons.UserDeletingRow += new DataGridViewRowCancelEventHandler(this.dgvDemons_UserDeletingRow);
+                if (levelValue != null && nameValue != null && raceValue != null)
+                {
+                    var actualDemonRace = _dbSession.CreateCriteria<Domain.Race>().List<Domain.Race>().
+                        Where(x => x.Name == raceValue.ToString()).FirstOrDefault();
+                    if (actualDemonRace == null && canInsertRace)
+                        actualDemonRace = GlobalObjects.InsertRaceMaybe(raceValue.ToString());
+
+                    if (actualDemonRace != null)
+                    {
+                        returnDemon = new Domain.Demon();
+                        returnDemon.Level = Convert.ToInt32(levelValue.ToString());
+                        returnDemon.Name = (string)nameValue;
+                        returnDemon.Race = actualDemonRace;
+                    }
+                }
+            }
+
+            return returnDemon;
         }
 
 
         private object[] CreateRow(Domain.Demon d)
         {
-            var returnObjectArray = new object[6];
-            returnObjectArray[COLUMN_ID] = d.Id;
-            returnObjectArray[COLUMN_USE_IN_FUSIONS] = d.UseInFusionCalculatorBoolean;
-            returnObjectArray[COLUMN_IN_PARTY] = d.InPartyBoolean;
-            returnObjectArray[COLUMN_LEVEL] = d.Level;
-            returnObjectArray[COLUMN_RACE] = d.Race.Name;
-            returnObjectArray[COLUMN_NAME] = d.Name;
+            var returnObjectArray = new object[Enum.GetNames(typeof(MyDataGridColumns)).Length];
+            returnObjectArray[(int)MyDataGridColumns.columnObject] = d;
+            returnObjectArray[(int)MyDataGridColumns.columnId] = d.Id;
+            returnObjectArray[(int)MyDataGridColumns.columnUseInFusions] = d.UseInFusionCalculatorBoolean;
+            returnObjectArray[(int)MyDataGridColumns.columnInParty] = d.InPartyBoolean;
+            returnObjectArray[(int)MyDataGridColumns.columnLevel] = d.Level;
+            returnObjectArray[(int)MyDataGridColumns.columnRace] = d.Race.Name;
+            returnObjectArray[(int)MyDataGridColumns.columnName] = d.Name;
 
             // TODO maybe:
             // do a select * on all races of the game
@@ -167,44 +227,31 @@ namespace Yatagarasu
         }
 
 
-        private Domain.Demon GetDemonFromDataGridViewRow(DataGridViewRow dgvr, bool canInsertRace)
+        private void RemoveHandlers()
         {
-            Domain.Demon returnDemon = null;
-
-            object idValue = dgvr.Cells[COLUMN_ID].Value;
-            object levelValue = dgvr.Cells[COLUMN_LEVEL].Value;
-            object nameValue = dgvr.Cells[COLUMN_NAME].Value;
-            object raceValue = dgvr.Cells[COLUMN_RACE].Value;
-
-            if (levelValue != null && nameValue != null && raceValue != null)
-            {
-                var actualDemonRace = _dbSession.CreateCriteria<Domain.Race>().List<Domain.Race>().
-                    Where(x => x.Name == raceValue.ToString()).FirstOrDefault();
-                if (actualDemonRace == null && canInsertRace)
-                    actualDemonRace = GlobalObjects.InsertRaceMaybe(raceValue.ToString());
-
-                if (actualDemonRace != null)
-                {
-                    if (idValue != null)
-                    {
-                        returnDemon = _dbSession.Get<Domain.Demon>((int)idValue);
-                    }
-                    else
-                    {
-                        returnDemon = new Domain.Demon();
-                    }
-                    returnDemon.Level = Convert.ToInt32(levelValue.ToString());
-                    returnDemon.Name = (string)nameValue;
-                    returnDemon.Race = actualDemonRace;
-                }
-            }
-            return returnDemon;
+            _logger.Info(this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name);
+            this.dgvDemons.CellValidating -=
+                new DataGridViewCellValidatingEventHandler(dgvDemons_CellValidating);
+            this.dgvDemons.CellValueChanged -=
+                new DataGridViewCellEventHandler(dgvDemons_CellValueChanged);
+            this.dgvDemons.UserDeletingRow -=
+                new DataGridViewRowCancelEventHandler(this.dgvDemons_UserDeletingRow);
         }
 
 
+        private void AddHandlers()
+        {
+            _logger.Info(this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name);
+            this.dgvDemons.CellValidating +=
+                new DataGridViewCellValidatingEventHandler(dgvDemons_CellValidating);
+            this.dgvDemons.CellValueChanged +=
+                new DataGridViewCellEventHandler(dgvDemons_CellValueChanged);
+            this.dgvDemons.UserDeletingRow +=
+                new DataGridViewRowCancelEventHandler(this.dgvDemons_UserDeletingRow);
+        }
 
 
-        #region event handlers
+        #region Handlers
         private void dgvDemons_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
             string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
@@ -282,15 +329,15 @@ namespace Yatagarasu
                             }
                             else
                             {
-                                if (e.ColumnIndex == COLUMN_IN_PARTY)
+                                if (e.ColumnIndex == (int)MyDataGridColumns.columnInParty)
                                 {
-                                    databaseDemon.InParty = 
-                                        (bool)this.dgvDemons.Rows[e.RowIndex].Cells[COLUMN_IN_PARTY].Value ? 1 : 0;
+                                    databaseDemon.InParty =
+                                        (bool)this.dgvDemons.Rows[e.RowIndex].Cells[(int)MyDataGridColumns.columnInParty].Value ? 1 : 0;
                                 }
-                                else if (e.ColumnIndex == COLUMN_USE_IN_FUSIONS)
+                                else if (e.ColumnIndex == (int)MyDataGridColumns.columnUseInFusions)
                                 {
                                     databaseDemon.UseInFusionCalculator =
-                                        (bool)this.dgvDemons.Rows[e.RowIndex].Cells[COLUMN_USE_IN_FUSIONS].Value ? 1 : 0;
+                                        (bool)this.dgvDemons.Rows[e.RowIndex].Cells[(int)MyDataGridColumns.columnUseInFusions].Value ? 1 : 0;
                                 }
                                 _dbSession.SaveOrUpdate(databaseDemon); // update
                             }
@@ -301,12 +348,19 @@ namespace Yatagarasu
 
                 } // using (var transaction = _dbSession.BeginTransaction())
 
-                GlobalObjects.MainForm.ForceUpdateFusions();
+                var numberOfDemonsForFusions = 
+                    _dbSession.CreateCriteria<Domain.Race>().List<Domain.Race>().
+                    SelectMany(x => x.Demons).Where(y => y.UseInFusionCalculatorBoolean).ToList();
+                if (numberOfDemonsForFusions.Count == 2)
+                {
+                    GlobalObjects.MainForm.ForceUpdateFusions();
+                }
 
                 if (insertedNewDemon)
                 {
                     RemoveHandlers();
-                    currentRow.Cells[COLUMN_ID].Value = databaseDemon.Id;
+                    currentRow.Cells[(int)MyDataGridColumns.columnObject].Value = databaseDemon;
+                    currentRow.Cells[(int)MyDataGridColumns.columnId].Value = databaseDemon.Id;
                     AddHandlers();
                 }
 
@@ -342,10 +396,6 @@ namespace Yatagarasu
         #endregion
 
 
-
-
-
-
-
     }
+
 }

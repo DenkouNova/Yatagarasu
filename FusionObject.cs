@@ -11,11 +11,11 @@ namespace Yatagarasu
 {
     class FusionObject
     {
-        public Domain.Demon _demon1 { get; set; }
-        public Domain.Demon _demon2 { get; set; }
-        public Domain.Demon _demon3 { get; set; }
-        public Domain.Fusion _fusion { get; set; }
-        private bool _fusionIsImpossible = false;
+        public Domain.Demon Demon1 { get; set; }
+        public Domain.Demon Demon2 { get; set; }
+        public Domain.Demon Demon3 { get; set; }
+        public Domain.Fusion Fusion { get; set; }
+        public bool FusionIsImpossible { get; set; }
 
         FeatherLogger _logger;
         ISession _dbSession;
@@ -27,10 +27,10 @@ namespace Yatagarasu
             _logger.OpenSection(location);
             _dbSession = GlobalObjects.DbSession;
 
-            _demon1 = (d1.Level <= d2.Level ? d1 : d2);
-            _demon2 = (d1.Level <= d2.Level ? d2 : d1);
-            _fusion = f;
-            _demon3 = FindDemonFromFusion(d1, d2, f);
+            Demon1 = (d1.Level <= d2.Level ? d1 : d2);
+            Demon2 = (d1.Level <= d2.Level ? d2 : d1);
+            Fusion = f;
+            Demon3 = FindDemonFromFusion(d1, d2, f);
 
             _logger.CloseSection(location);
         }
@@ -44,7 +44,7 @@ namespace Yatagarasu
             {
                 if (f.IdRace3 == GlobalObjects.ImpossibleToFuseRace.Id)
                 {
-                    _fusionIsImpossible = true;
+                    FusionIsImpossible = true;
                 }
                 else
                 {
@@ -60,28 +60,28 @@ namespace Yatagarasu
             return returnDemon;
         }
 
-
+        /*
         public object[] ToDataRow()
         {
             var returnObjectList = new List<string>();
 
-            returnObjectList.Add(_demon1.Level.ToString().PadLeft(2, '0'));
-            returnObjectList.Add(_demon1.Race.Name);
-            returnObjectList.Add(_demon1.Name);
+            returnObjectList.Add(Demon1.Level.ToString().PadLeft(2, '0'));
+            returnObjectList.Add(Demon1.Race.Name);
+            returnObjectList.Add(Demon1.Name);
 
-            returnObjectList.Add(_demon2.Level.ToString().PadLeft(2, '0'));
-            returnObjectList.Add(_demon2.Race.Name);
-            returnObjectList.Add(_demon2.Name);
+            returnObjectList.Add(Demon2.Level.ToString().PadLeft(2, '0'));
+            returnObjectList.Add(Demon2.Race.Name);
+            returnObjectList.Add(Demon2.Name);
 
-            if (_demon3 != null)
+            if (Demon3 != null)
             {
-                returnObjectList.Add(_demon3.Level.ToString().PadLeft(2, '0'));
-                returnObjectList.Add(_demon3.Race.Name);
-                returnObjectList.Add(_demon3.Name);
+                returnObjectList.Add(Demon3.Level.ToString().PadLeft(2, '0'));
+                returnObjectList.Add(Demon3.Race.Name);
+                returnObjectList.Add(Demon3.Name);
             }
             else
             {
-                if (_fusionIsImpossible)
+                if (FusionIsImpossible)
                 {
                     returnObjectList.Add("-");
                     returnObjectList.Add("-");
@@ -97,7 +97,7 @@ namespace Yatagarasu
 
             return returnObjectList.ToArray<object>();
         }
-
+        */
 
     }
 }

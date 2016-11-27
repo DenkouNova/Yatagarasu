@@ -32,10 +32,13 @@ namespace Yatagarasu
             InitializeComponent();
 
             this.dgvFusions.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
-            this.dgvFusions.AllowUserToResizeRows = false;
+            this.dgvFusions.AllowUserToResizeRows =
+                this.dgvFusions.AllowUserToResizeColumns =
+                this.dgvFusions.AllowUserToAddRows =
+                this.dgvFusions.AllowUserToDeleteRows = 
+                this.dgvFusions.ColumnHeadersVisible = false;
             this.dgvFusions.RowTemplate.Height = 35;
             this.dgvFusions.RowTemplate.MinimumHeight = 35;
-            this.dgvFusions.ColumnHeadersVisible = false;
 
             LoadData();
 
@@ -157,10 +160,6 @@ namespace Yatagarasu
                 System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             notAvailableStyle.BackColor = 
                 System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-
-            
-            
-
 
             foreach(DataGridViewTextBoxColumn oneColumn in this.dgvFusions.Columns)
                 oneColumn.DefaultCellStyle = defaultStyle;

@@ -42,11 +42,12 @@ namespace Yatagarasu
             GlobalObjects.MainForm = this;
             GlobalObjects.CurrentGame = null;
 
-            
-            ShowFullDemonsListForm();
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+
             // ShowPartyDemonsForm();
-            //ShowFusionsForm();
-            //ShowPartyFusionsVerticalForm();
+            ShowFusionsChartForm();
+            ShowFullDemonsListForm();
+            ShowPartyFusionsForm();
 
             ShowChooseGameForm();
             
@@ -94,9 +95,12 @@ namespace Yatagarasu
 
         public void ForceUpdateFusions()
         {
-            _partyFusionsVerticalForm.Visible = true;
-            _partyFusionsVerticalForm.LoadData();
-            _partyFusionsVerticalForm.Refresh();
+            if (_partyFusionsVerticalForm != null)
+            {
+                _partyFusionsVerticalForm.Visible = true;
+                _partyFusionsVerticalForm.LoadData();
+                _partyFusionsVerticalForm.Refresh();
+            }
         }
 
 
@@ -148,7 +152,7 @@ namespace Yatagarasu
         }
 
 
-        private void ShowFusionsForm()
+        private void ShowFusionsChartForm()
         {
             string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
             _logger.OpenSection(location);
@@ -164,7 +168,7 @@ namespace Yatagarasu
         }
 
 
-        private void ShowPartyFusionsVerticalForm()
+        private void ShowPartyFusionsForm()
         {
             string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
             _logger.OpenSection(location);
