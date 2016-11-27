@@ -30,6 +30,8 @@ namespace Yatagarasu
         const int COLUMN_RACE_3 = 8;
         const int COLUMN_NAME_3 = 9;
 
+        bool _cellChanged = false;
+
         DataGridViewTextBoxColumn 
             colLevel1, colRace1, colName1,
             colLevel2, colRace2, colName2,
@@ -59,28 +61,27 @@ namespace Yatagarasu
             this.colLevel2 = new DataGridViewTextBoxColumn()
                 { HeaderText = "Level2", Name = "colLevel2", Width = 45, ReadOnly = true };
             this.colLevel3 = new DataGridViewTextBoxColumn()
-                { HeaderText = "Level3", Name = "colLevel3", Width = 45, ReadOnly = true };
+                { HeaderText = "Level3", Name = "colLevel3", Width = 45, ReadOnly = false };
 
             this.colRace1 = new DataGridViewTextBoxColumn()
                 { HeaderText = "Race1", Name = "colRace1", Width = 90, ReadOnly = true };
             this.colRace2 = new DataGridViewTextBoxColumn()
                 { HeaderText = "Race2", Name = "colRace2", Width = 90, ReadOnly = true };
             this.colRace3 = new DataGridViewTextBoxColumn()
-                { HeaderText = "Race3", Name = "colRace3", Width = 90, ReadOnly = true };
+                { HeaderText = "Race3", Name = "colRace3", Width = 90, ReadOnly = false };
 
             this.colName1 = new DataGridViewTextBoxColumn()
                 { HeaderText = "Name1", Name = "colName1", Width = 170, ReadOnly = true };
             this.colName2 = new DataGridViewTextBoxColumn()
                 { HeaderText = "Name2", Name = "colName2", Width = 170, ReadOnly = true };
             this.colName3 = new DataGridViewTextBoxColumn()
-                { HeaderText = "Name3", Name = "colName3", Width = 170, ReadOnly = true };
+                { HeaderText = "Name3", Name = "colName3", Width = 170, ReadOnly = false };
 
             this.dgvPartyFusions.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
             this.dgvPartyFusions.AllowUserToResizeRows = false;
             this.dgvPartyFusions.RowTemplate.Height = 40;
             this.dgvPartyFusions.RowTemplate.MinimumHeight = 40;
             this.dgvPartyFusions.AllowUserToAddRows = false;
-            this.dgvPartyFusions.ReadOnly = true;
 
             this.colLevel1.DefaultCellStyle = this.colLevel2.DefaultCellStyle =
                 this.colLevel3.DefaultCellStyle = this.colRace1.DefaultCellStyle =
@@ -183,17 +184,54 @@ namespace Yatagarasu
         {
             this.dgvPartyFusions.SelectionChanged += 
                 new EventHandler(this.dgvPartyFusions_SelectionChanged);
-
+            this.dgvPartyFusions.CellValidating += new DataGridViewCellValidatingEventHandler(dgvPartyFusions_CellValidating);
+            this.dgvPartyFusions.CellValueChanged += new DataGridViewCellEventHandler(dgvPartyFusions_CellValueChanged);
+            
         }
 
         private void RemoveHandlers()
         {
             this.dgvPartyFusions.SelectionChanged -=
                 new EventHandler(this.dgvPartyFusions_SelectionChanged);
+            this.dgvPartyFusions.CellValidating -= new DataGridViewCellValidatingEventHandler(dgvPartyFusions_CellValidating);
+            this.dgvPartyFusions.CellValueChanged -= new DataGridViewCellEventHandler(dgvPartyFusions_CellValueChanged);
+        }
+
+
+        private void dgvPartyFusions_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+            string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
+            _logger.OpenSection(location);
+
+            _logger.Info("Called with row index " + e.RowIndex + ", column index = " + e.ColumnIndex);
+            var currentRow = this.dgvPartyFusions.Rows[e.RowIndex];
+
+            var oldValue = currentRow.Cells[e.ColumnIndex].Value;
+            if (oldValue != null) oldValue = oldValue.ToString();
+            var newValue = e.FormattedValue;
+            if (newValue != null) newValue = newValue.ToString();
+
+            _logger.Info("oldValue = " + (oldValue == null ? "(null)" : "'" + oldValue.ToString() + "'"));
+            _logger.Info("newValue = " + (newValue == null ? "(null)" : "'" + newValue.ToString() + "'"));
+            _cellChanged = (oldValue != newValue);
+            _logger.Info("Cell changed set to " + _cellChanged);
+
+            _logger.CloseSection(location);
+        }
+
+        private void dgvPartyFusions_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (_cellChanged)
+            {
+                int i = 3;
+                i++;
+            }
         }
 
         private void dgvPartyFusions_SelectionChanged(object sender, EventArgs e)
         {
+            var blah = this.dgvPartyFusions.Rows.Count;
+
             if (this.dgvPartyFusions.SelectedRows.Count == this.dgvPartyFusions.Rows.Count)
             {
                 LoadData();

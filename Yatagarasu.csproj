@@ -98,22 +98,23 @@
     <Compile Include="ChooseGameForm.Designer.cs">
       <DependentUpon>ChooseGameForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="DemonsListForm.cs">
+    <Compile Include="Domain\CalculatedFusion.cs" />
+    <Compile Include="FullDemonsListForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DemonsListForm.Designer.cs">
-      <DependentUpon>DemonsListForm.cs</DependentUpon>
+    <Compile Include="FullDemonsListForm.Designer.cs">
+      <DependentUpon>FullDemonsListForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Domain\Demon.cs" />
     <Compile Include="Domain\Fusion.cs" />
     <Compile Include="Domain\Game.cs" />
     <Compile Include="Domain\Race.cs" />
     <Compile Include="FusionObject.cs" />
-    <Compile Include="FusionsForm.cs">
+    <Compile Include="FusionsChartForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FusionsForm.Designer.cs">
-      <DependentUpon>FusionsForm.cs</DependentUpon>
+    <Compile Include="FusionsChartForm.Designer.cs">
+      <DependentUpon>FusionsChartForm.cs</DependentUpon>
     </Compile>
     <Compile Include="GlobalObjects.cs" />
     <Compile Include="MainForm.cs">
@@ -123,11 +124,11 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="NHibernateHelper.cs" />
-    <Compile Include="PartyDemonsListForm.cs">
+    <Compile Include="DemonsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PartyDemonsListForm.Designer.cs">
-      <DependentUpon>PartyDemonsListForm.cs</DependentUpon>
+    <Compile Include="DemonsForm.Designer.cs">
+      <DependentUpon>DemonsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="PartyFusionsVerticalForm.cs">
       <SubType>Form</SubType>
@@ -140,17 +141,17 @@
     <EmbeddedResource Include="ChooseGameForm.resx">
       <DependentUpon>ChooseGameForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DemonsListForm.resx">
-      <DependentUpon>DemonsListForm.cs</DependentUpon>
+    <EmbeddedResource Include="FullDemonsListForm.resx">
+      <DependentUpon>FullDemonsListForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FusionsForm.resx">
-      <DependentUpon>FusionsForm.cs</DependentUpon>
+    <EmbeddedResource Include="FusionsChartForm.resx">
+      <DependentUpon>FusionsChartForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PartyDemonsListForm.resx">
-      <DependentUpon>PartyDemonsListForm.cs</DependentUpon>
+    <EmbeddedResource Include="DemonsForm.resx">
+      <DependentUpon>DemonsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PartyFusionsVerticalForm.resx">
       <DependentUpon>PartyFusionsVerticalForm.cs</DependentUpon>

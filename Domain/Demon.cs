@@ -21,6 +21,8 @@ namespace Yatagarasu.Domain
 
         public virtual bool UseInFusionCalculatorBoolean { get { return UseInFusionCalculator > 0; } }
 
+        public virtual bool InPartyBoolean { get { return InParty > 0; } }
+
         public virtual string Name { get; set; }
 
         public virtual Race Race { get; set; }

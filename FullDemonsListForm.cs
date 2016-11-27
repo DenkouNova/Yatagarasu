@@ -17,15 +17,18 @@ namespace Yatagarasu
     public partial class FullDemonsListForm : Form
     {
         const int COLUMN_ID = 0;
-        const int COLUMN_LEVEL = 1;
-        const int COLUMN_RACE = 2;
-        const int COLUMN_NAME = 3;
+        const int COLUMN_USE_IN_FUSIONS = 1;
+        const int COLUMN_IN_PARTY = 2;
+        const int COLUMN_LEVEL = 3;
+        const int COLUMN_RACE = 4;
+        const int COLUMN_NAME = 5;
 
         FeatherLogger _logger;
         ISession _dbSession;
         int _maxDemonId;
         bool _cellChanged = false;
 
+        DataGridViewCheckBoxColumn colUseInFusions, colInParty;
         DataGridViewTextBoxColumn colId, colLevel, colRace, colName;
 
         public FullDemonsListForm()
@@ -47,6 +50,15 @@ namespace Yatagarasu
 
         private void InitializeColumnsAndStuff()
         {
+            this.colInParty = new DataGridViewCheckBoxColumn {
+                HeaderText = "InParty",
+                Name = "colInParty",
+                Width = 50 };
+            this.colUseInFusions = new DataGridViewCheckBoxColumn {
+                HeaderText = "Fuse",
+                Name = "colUseInFusions",
+                Width = 50 };
+
             this.colId = new DataGridViewTextBoxColumn()
                 { HeaderText = "Id", Name = "colId", Width = 70, ReadOnly = true };
             this.colLevel = new DataGridViewTextBoxColumn()
@@ -71,6 +83,8 @@ namespace Yatagarasu
 
             this.dgvDemons.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
 				this.colId,
+                this.colUseInFusions,
+                this.colInParty,
 				this.colLevel,
 				this.colRace,
 				this.colName});
@@ -100,7 +114,7 @@ namespace Yatagarasu
             {
                 _logger.Info("Game '" + game.Name + "' chosen; will load list of demons.");
                 var allDemons = GlobalObjects.CurrentGame.Races.SelectMany(x => x.Demons).
-                OrderBy(y => y.Level).ThenBy(z => z.Race.Id);
+                    OrderBy(y => y.Level).ThenBy(z => z.Race.Id).ToList();
                 _maxDemonId = allDemons.Select(x => x.Id).Max().GetValueOrDefault();
                 foreach (Domain.Demon d in allDemons)
                 {
@@ -135,8 +149,10 @@ namespace Yatagarasu
 
         private object[] CreateRow(Domain.Demon d)
         {
-            var returnObjectArray = new object[4];
+            var returnObjectArray = new object[6];
             returnObjectArray[COLUMN_ID] = d.Id;
+            returnObjectArray[COLUMN_USE_IN_FUSIONS] = d.UseInFusionCalculatorBoolean;
+            returnObjectArray[COLUMN_IN_PARTY] = d.InPartyBoolean;
             returnObjectArray[COLUMN_LEVEL] = d.Level;
             returnObjectArray[COLUMN_RACE] = d.Race.Name;
             returnObjectArray[COLUMN_NAME] = d.Name;
@@ -266,6 +282,16 @@ namespace Yatagarasu
                             }
                             else
                             {
+                                if (e.ColumnIndex == COLUMN_IN_PARTY)
+                                {
+                                    databaseDemon.InParty = 
+                                        (bool)this.dgvDemons.Rows[e.RowIndex].Cells[COLUMN_IN_PARTY].Value ? 1 : 0;
+                                }
+                                else if (e.ColumnIndex == COLUMN_USE_IN_FUSIONS)
+                                {
+                                    databaseDemon.UseInFusionCalculator =
+                                        (bool)this.dgvDemons.Rows[e.RowIndex].Cells[COLUMN_USE_IN_FUSIONS].Value ? 1 : 0;
+                                }
                                 _dbSession.SaveOrUpdate(databaseDemon); // update
                             }
                             transaction.Commit();
@@ -274,6 +300,8 @@ namespace Yatagarasu
                     }
 
                 } // using (var transaction = _dbSession.BeginTransaction())
+
+                GlobalObjects.MainForm.ForceUpdateFusions();
 
                 if (insertedNewDemon)
                 {

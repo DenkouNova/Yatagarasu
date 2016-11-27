@@ -23,7 +23,7 @@ namespace Yatagarasu
         ISession _dbSession;
 
         ChooseGameForm _chooseGameForm;
-        FullDemonsListForm _demonsListForm;
+        FullDemonsListForm _fullDemonsListForm;
         DemonsForm _partyDemonsListForm;
         FusionsChartForm _fusionsForm;
         PartyFusionsVerticalForm _partyFusionsVerticalForm;
@@ -43,10 +43,10 @@ namespace Yatagarasu
             GlobalObjects.CurrentGame = null;
 
             
-            ShowDemonsListForm();
-            ShowPartyDemonsForm();
-            ShowFusionsForm();
-            ShowPartyFusionsVerticalForm();
+            ShowFullDemonsListForm();
+            // ShowPartyDemonsForm();
+            //ShowFusionsForm();
+            //ShowPartyFusionsVerticalForm();
 
             ShowChooseGameForm();
             
@@ -72,7 +72,7 @@ namespace Yatagarasu
                 _logger.Info("Setting form text to '" + text + "'");
                 this.Text = text;
 
-                if (_demonsListForm != null) _demonsListForm.LoadData();
+                if (_fullDemonsListForm != null) _fullDemonsListForm.LoadData();
                 if (_partyDemonsListForm != null) _partyDemonsListForm.LoadData();
                 if (_fusionsForm != null) _fusionsForm.LoadData();
                 if (_partyFusionsVerticalForm != null) _partyFusionsVerticalForm.LoadData(); 
@@ -92,6 +92,14 @@ namespace Yatagarasu
         }
 
 
+        public void ForceUpdateFusions()
+        {
+            _partyFusionsVerticalForm.Visible = true;
+            _partyFusionsVerticalForm.LoadData();
+            _partyFusionsVerticalForm.Refresh();
+        }
+
+
         private void ShowChooseGameForm()
         {
             string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
@@ -108,18 +116,18 @@ namespace Yatagarasu
         }
 
 
-        private void ShowDemonsListForm()
+        private void ShowFullDemonsListForm()
         {
             string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
             _logger.OpenSection(location);
-            if (_demonsListForm == null)
+            if (_fullDemonsListForm == null)
             {
                 _logger.Info("Form is null. Creating...");
-                _demonsListForm = new FullDemonsListForm();
-                _demonsListForm.MdiParent = this;
+                _fullDemonsListForm = new FullDemonsListForm();
+                _fullDemonsListForm.MdiParent = this;
             }
-            _logger.Info(_demonsListForm.Visible ? "Form is already visible." : "Showing form...");
-            if (!_demonsListForm.Visible) _demonsListForm.Show();
+            _logger.Info(_fullDemonsListForm.Visible ? "Form is already visible." : "Showing form...");
+            if (!_fullDemonsListForm.Visible) _fullDemonsListForm.Show();
             _logger.CloseSection(location);
         }
 
@@ -181,7 +189,7 @@ namespace Yatagarasu
 
         private void demonsListToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ShowDemonsListForm();
+            ShowFullDemonsListForm();
         }
 
         private void partyDemonsToolStripMenuItem_Click(object sender, EventArgs e)
