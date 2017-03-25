@@ -48,7 +48,8 @@ namespace Yatagarasu
             {
                 string location = new StackFrame().GetMethod().DeclaringType.ToString();
                 var returnLogger = new FeatherLogger(
-                        FeatherLogger.TRACE_LEVEL_INFO,
+                        //FeatherLogger.TRACE_LEVEL_INFO,
+                        FeatherLogger.TRACE_LEVEL_ERROR,
                         @"D:\Logger\Yatagarasu",
                         "Yatagarasu",
                         true,

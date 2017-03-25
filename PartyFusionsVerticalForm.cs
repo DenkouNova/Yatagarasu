@@ -18,7 +18,7 @@ namespace Yatagarasu
         FeatherLogger _logger;
         ISession _dbSession;
 
-        // Columns declared in the order the appear
+        // Columns declared in the order they appear
         enum MyDataGridColumns
         {
             colFusionObject,
@@ -231,6 +231,7 @@ namespace Yatagarasu
                 this.dgvPartyFusions.Rows.Clear();
                 var demonsForFusions = GlobalObjects.CurrentGame.Races.SelectMany(x => x.Demons).
                     Where(y => y.UseInFusionCalculatorBoolean).ToList();
+
                 for (int i = 0; i < demonsForFusions.Count; i++)
                 {
                     for (int j = i+1; j < demonsForFusions.Count; j++)
@@ -239,15 +240,47 @@ namespace Yatagarasu
                         {
                             _logger.Info("First demon for fusion: " + demonsForFusions[i].ToString());
                             _logger.Info("Second demon for fusion: " + demonsForFusions[j].ToString());
-                            var oneFusion = _dbSession.CreateCriteria<Domain.Fusion>().List<Domain.Fusion>()
+
+                            _logger.Info("Checking if this fusion was already calculated...");
+                            var strSql =
+                                " SELECT IdDemon3 FROM CalculatedFusions cf" +
+                                " WHERE (cf.IdDemon1 = " + demonsForFusions[i].Id +
+                                       " AND cf.IdDemon2 = " + demonsForFusions[j].Id + ")" +
+                                " OR (cf.IdDemon2 = " + demonsForFusions[i].Id +
+                                       " AND cf.IdDemon1 = " + demonsForFusions[j].Id + ")";
+                            _logger.Info("Query: '" + strSql + "'");
+                            
+                            var existingFusions = _dbSession.CreateSQLQuery(strSql)
+                                .AddScalar("IdDemon3", NHibernateUtil.Int32).List();
+
+                            FusionObject oneFusionObject;
+                            if (existingFusions.Count > 0)
+                            {
+                                var DemonResult = _dbSession.Get<Domain.Demon>(Convert.ToInt32(existingFusions[0]));
+                                oneFusionObject = new FusionObject
+                                    (demonsForFusions[i], demonsForFusions[j], DemonResult);
+
+                            } else {
+                                var oneFusion = _dbSession.CreateCriteria<Domain.Fusion>().List<Domain.Fusion>()
                                 .Where(x =>
                                     (x.IdRace1 == demonsForFusions[i].Race.Id &&
                                         x.IdRace2 == demonsForFusions[j].Race.Id) ||
                                     (x.IdRace2 == demonsForFusions[i].Race.Id &&
                                         x.IdRace1 == demonsForFusions[j].Race.Id))
                                     .SingleOrDefault();
-                            var oneFusionObject = new FusionObject
-                                (demonsForFusions[i], demonsForFusions[j], oneFusion);
+                                oneFusionObject = new FusionObject
+                                    (demonsForFusions[i], demonsForFusions[j], oneFusion);
+
+                                if (oneFusionObject.Demon3 != null)
+                                {
+                                    var strSqlUpdate =
+                                    " INSERT INTO CalculatedFusions (IdDemon1, IdDemon2, IdDemon3)" +
+                                    " VALUES (" + oneFusionObject.Demon1.Id + ", " + oneFusionObject.Demon2.Id + ", " +
+                                        oneFusionObject.Demon3.Id + ")";
+                                    _dbSession.CreateSQLQuery(strSqlUpdate).ExecuteUpdate();
+                                }
+                            }
+
                             this.dgvPartyFusions.Rows.Add(this.CreateRow(oneFusionObject));
 
                             var formattedRow = this.dgvPartyFusions.Rows[this.dgvPartyFusions.Rows.Count - 1];

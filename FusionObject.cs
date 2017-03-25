@@ -35,6 +35,20 @@ namespace Yatagarasu
             _logger.CloseSection(location);
         }
 
+        public FusionObject(Domain.Demon d1, Domain.Demon d2, Domain.Demon d3)
+        {
+            _logger = GlobalObjects.Logger;
+            string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
+            _logger.OpenSection(location);
+            _dbSession = GlobalObjects.DbSession;
+
+            Demon1 = (d1.Level <= d2.Level ? d1 : d2);
+            Demon2 = (d1.Level <= d2.Level ? d2 : d1);
+            Demon3 = d3;
+
+            _logger.CloseSection(location);
+        }
+
         private Domain.Demon FindDemonFromFusion(
             Domain.Demon d1, Domain.Demon d2, Domain.Fusion f)
         {
