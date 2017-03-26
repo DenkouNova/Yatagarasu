@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                  assembly="Yatagarasu"
+                  namespace="Yatagarasu.Domain">
+
+  <class name="Game" table="Games">
+    <id name="Id">
+      <generator class="increment" />
+    </id>
+    <property name="Name" />
+    <property name="Year" />
+    <property name="AcceptsMultiDemon" />
+    <set name="Races" inverse="true">
+      <key>
+        <column name="IdGame"/>
+      </key>
+      <one-to-many class="Race"/>
+    </set>
+  </class>
+
+</hibernate-mapping>
