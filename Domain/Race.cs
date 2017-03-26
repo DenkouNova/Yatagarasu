@@ -15,14 +15,12 @@ namespace Yatagarasu.Domain
 
         public virtual Game Game { get; set; }
 
-        /*
         private ISet<Demon> demons = new HashSet<Demon>();
         public virtual ISet<Demon> Demons
         {
             get { return demons; }
             set { demons = value; }
         }
-        */
 
         protected Race() { }
 

@@ -29,6 +29,10 @@
         private void InitializeComponent()
         {
             this.tlpMain = new System.Windows.Forms.TableLayoutPanel();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.label3 = new System.Windows.Forms.Label();
+            this.dgvDemons = new System.Windows.Forms.DataGridView();
             this.tlpTierOneLeft = new System.Windows.Forms.TableLayoutPanel();
             this.pGame = new System.Windows.Forms.Panel();
             this.lbCurrentGame = new System.Windows.Forms.Label();
@@ -36,11 +40,18 @@
             this.pFamilies = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.tlpTier1Races = new System.Windows.Forms.TableLayoutPanel();
+            this.label2 = new System.Windows.Forms.Label();
             this.dgvRaces = new System.Windows.Forms.DataGridView();
             this.dgvRaces_Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvRaces_Name = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.label2 = new System.Windows.Forms.Label();
+            this.dgvDemons_Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvDemons_Level = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvDemons_Race = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvDemons_Name = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tlpMain.SuspendLayout();
+            this.panel2.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvDemons)).BeginInit();
             this.tlpTierOneLeft.SuspendLayout();
             this.pGame.SuspendLayout();
             this.pFamilies.SuspendLayout();
@@ -51,9 +62,11 @@
             // 
             // tlpMain
             // 
-            this.tlpMain.ColumnCount = 2;
+            this.tlpMain.ColumnCount = 3;
             this.tlpMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 300F));
+            this.tlpMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 450F));
             this.tlpMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpMain.Controls.Add(this.panel2, 1, 0);
             this.tlpMain.Controls.Add(this.tlpTierOneLeft, 0, 0);
             this.tlpMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpMain.Location = new System.Drawing.Point(0, 0);
@@ -62,6 +75,57 @@
             this.tlpMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpMain.Size = new System.Drawing.Size(1287, 679);
             this.tlpMain.TabIndex = 1;
+            // 
+            // panel2
+            // 
+            this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel2.Controls.Add(this.tableLayoutPanel1);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.Location = new System.Drawing.Point(303, 3);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(444, 673);
+            this.panel2.TabIndex = 3;
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 1;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.Controls.Add(this.label3, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.dgvDemons, 0, 1);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(442, 671);
+            this.tableLayoutPanel1.TabIndex = 0;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label3.Location = new System.Drawing.Point(3, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(436, 20);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Demons";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // dgvDemons
+            // 
+            this.dgvDemons.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvDemons.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dgvDemons_Id,
+            this.dgvDemons_Level,
+            this.dgvDemons_Race,
+            this.dgvDemons_Name});
+            this.dgvDemons.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvDemons.Location = new System.Drawing.Point(3, 23);
+            this.dgvDemons.Name = "dgvDemons";
+            this.dgvDemons.Size = new System.Drawing.Size(436, 645);
+            this.dgvDemons.TabIndex = 3;
             // 
             // tlpTierOneLeft
             // 
@@ -143,6 +207,17 @@
             this.tlpTier1Races.Size = new System.Drawing.Size(286, 585);
             this.tlpTier1Races.TabIndex = 0;
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label2.Location = new System.Drawing.Point(3, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(280, 20);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "Races";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // dgvRaces
             // 
             this.dgvRaces.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -170,16 +245,31 @@
             this.dgvRaces_Name.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvRaces_Name.Width = 175;
             // 
-            // label2
+            // dgvDemons_Id
             // 
-            this.label2.AutoSize = true;
-            this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label2.Location = new System.Drawing.Point(3, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(280, 20);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Races";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.dgvDemons_Id.HeaderText = "Id";
+            this.dgvDemons_Id.Name = "dgvDemons_Id";
+            this.dgvDemons_Id.ReadOnly = true;
+            this.dgvDemons_Id.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvDemons_Id.Width = 40;
+            // 
+            // dgvDemons_Level
+            // 
+            this.dgvDemons_Level.HeaderText = "Lv";
+            this.dgvDemons_Level.Name = "dgvDemons_Level";
+            this.dgvDemons_Level.Width = 40;
+            // 
+            // dgvDemons_Race
+            // 
+            this.dgvDemons_Race.HeaderText = "Race";
+            this.dgvDemons_Race.Name = "dgvDemons_Race";
+            // 
+            // dgvDemons_Name
+            // 
+            this.dgvDemons_Name.HeaderText = "Name";
+            this.dgvDemons_Name.Name = "dgvDemons_Name";
+            this.dgvDemons_Name.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvDemons_Name.Width = 180;
             // 
             // MainForm
             // 
@@ -191,6 +281,10 @@
             this.Text = "MainForm2";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.tlpMain.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvDemons)).EndInit();
             this.tlpTierOneLeft.ResumeLayout(false);
             this.pGame.ResumeLayout(false);
             this.pGame.PerformLayout();
@@ -217,5 +311,13 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvRaces_Id;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvRaces_Name;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.DataGridView dgvDemons;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dgvDemons_Id;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dgvDemons_Level;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dgvDemons_Race;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dgvDemons_Name;
     }
 }

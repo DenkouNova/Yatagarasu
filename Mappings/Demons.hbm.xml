@@ -3,18 +3,16 @@
                   assembly="Yatagarasu"
                   namespace="Yatagarasu.Domain">
 
-  <class name="Race" table="Races">
+  <class name="Demon" table="Demons">
     <id name="Id">
       <generator class="increment" />
     </id>
+    <property name="Level" />
     <property name="Name" />
-    <many-to-one name="Game" class="Game" column="IdGame"/>
-    <set name="Demons" inverse="true">
-      <key>
-        <column name="IdRace"/>
-      </key>
-      <one-to-many class="Demon"/>
-    </set>
+    <!--<property name="InParty" />
+    <property name="UseInFusionCalculator" />-->
+
+    <many-to-one name="Race" class="Race" column="IdRace"/>
   </class>
 
 </hibernate-mapping>
