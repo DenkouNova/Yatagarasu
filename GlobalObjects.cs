@@ -88,7 +88,6 @@ namespace Yatagarasu
             }
         }
 
-        /*
         public static DataGridViewCellStyle GetDefaultDgvcStyle(float fontSize, bool enabled = true, bool inParty = false)
         {
             var returnStyle = new DataGridViewCellStyle()
@@ -106,7 +105,7 @@ namespace Yatagarasu
 
             return returnStyle;
         }
-
+        /*
 
         public static Domain.Race InsertRaceMaybe(string raceName)
         {

@@ -36,8 +36,10 @@
             this.pFamilies = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.tlpTier1Races = new System.Windows.Forms.TableLayoutPanel();
-            this.label2 = new System.Windows.Forms.Label();
             this.dgvRaces = new System.Windows.Forms.DataGridView();
+            this.dgvRaces_Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvRaces_Name = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.label2 = new System.Windows.Forms.Label();
             this.tlpMain.SuspendLayout();
             this.tlpTierOneLeft.SuspendLayout();
             this.pGame.SuspendLayout();
@@ -141,6 +143,33 @@
             this.tlpTier1Races.Size = new System.Drawing.Size(286, 585);
             this.tlpTier1Races.TabIndex = 0;
             // 
+            // dgvRaces
+            // 
+            this.dgvRaces.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvRaces.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dgvRaces_Id,
+            this.dgvRaces_Name});
+            this.dgvRaces.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvRaces.Location = new System.Drawing.Point(3, 23);
+            this.dgvRaces.Name = "dgvRaces";
+            this.dgvRaces.Size = new System.Drawing.Size(280, 559);
+            this.dgvRaces.TabIndex = 3;
+            // 
+            // dgvRaces_Id
+            // 
+            this.dgvRaces_Id.HeaderText = "Id";
+            this.dgvRaces_Id.Name = "dgvRaces_Id";
+            this.dgvRaces_Id.ReadOnly = true;
+            this.dgvRaces_Id.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvRaces_Id.Width = 40;
+            // 
+            // dgvRaces_Name
+            // 
+            this.dgvRaces_Name.HeaderText = "Name";
+            this.dgvRaces_Name.Name = "dgvRaces_Name";
+            this.dgvRaces_Name.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvRaces_Name.Width = 175;
+            // 
             // label2
             // 
             this.label2.AutoSize = true;
@@ -151,15 +180,6 @@
             this.label2.TabIndex = 2;
             this.label2.Text = "Races";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // dgvRaces
-            // 
-            this.dgvRaces.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvRaces.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgvRaces.Location = new System.Drawing.Point(3, 23);
-            this.dgvRaces.Name = "dgvRaces";
-            this.dgvRaces.Size = new System.Drawing.Size(280, 559);
-            this.dgvRaces.TabIndex = 3;
             // 
             // MainForm
             // 
@@ -193,7 +213,9 @@
         private System.Windows.Forms.Panel pFamilies;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TableLayoutPanel tlpTier1Races;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.DataGridView dgvRaces;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dgvRaces_Id;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dgvRaces_Name;
+        private System.Windows.Forms.Label label2;
     }
 }

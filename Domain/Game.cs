@@ -21,13 +21,12 @@ namespace Yatagarasu.Domain
             this.Name = gameName;
         }
 
-        /*
         private ISet<Race> races = new HashSet<Race>();
         public virtual ISet<Race> Races
         {
             get { return races; }
             set { races = value; }
-        }*/
+        }
 
         public override string ToString()
         {
