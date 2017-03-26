@@ -14,24 +14,20 @@ namespace Yatagarasu.Domain
 
         public virtual string Name { get; set; }
 
-        public virtual int Year { get; set; }
+        protected Game() { }
 
-        protected virtual int AcceptsMultiDemon { get; set; }
-
-        public virtual bool AcceptsMultiDemonBoolean
+        public Game (string gameName)
         {
-            get
-            {
-                return AcceptsMultiDemon > 0;
-            }
+            this.Name = gameName;
         }
 
+        /*
         private ISet<Race> races = new HashSet<Race>();
         public virtual ISet<Race> Races
         {
             get { return races; }
             set { races = value; }
-        }
+        }*/
 
         public override string ToString()
         {

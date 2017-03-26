@@ -92,29 +92,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChooseGameForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ChooseGameForm.Designer.cs">
-      <DependentUpon>ChooseGameForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FullDemonsListForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FullDemonsListForm.Designer.cs">
-      <DependentUpon>FullDemonsListForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Domain\Demon.cs" />
     <Compile Include="Domain\Fusion.cs" />
     <Compile Include="Domain\Game.cs" />
     <Compile Include="Domain\Race.cs" />
-    <Compile Include="FusionObject.cs" />
-    <Compile Include="FusionsChartForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FusionsChartForm.Designer.cs">
-      <DependentUpon>FusionsChartForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="GlobalObjects.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -123,37 +104,16 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="NHibernateHelper.cs" />
-    <Compile Include="DemonsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DemonsForm.Designer.cs">
-      <DependentUpon>DemonsForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="PartyFusionsVerticalForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="PartyFusionsVerticalForm.Designer.cs">
-      <DependentUpon>PartyFusionsVerticalForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="ChooseGameForm.resx">
-      <DependentUpon>ChooseGameForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FullDemonsListForm.resx">
-      <DependentUpon>FullDemonsListForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FusionsChartForm.resx">
-      <DependentUpon>FusionsChartForm.cs</DependentUpon>
-    </EmbeddedResource>
+    <Compile Include="UserControls\ChooseGame.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserControls\ChooseGame.Designer.cs">
+      <DependentUpon>ChooseGame.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DemonsForm.resx">
-      <DependentUpon>DemonsForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PartyFusionsVerticalForm.resx">
-      <DependentUpon>PartyFusionsVerticalForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -164,6 +124,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="UserControls\ChooseGame.resx">
+      <DependentUpon>ChooseGame.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -181,7 +144,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Mappings\Games.hbm.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Feathers\Feathers.csproj">
@@ -190,17 +152,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Mappings\Races.hbm.xml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Mappings\Demons.hbm.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Mappings\Fusions.hbm.xml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Mappings\Games.hbm.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.103\build\net40\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.103\build\net40\System.Data.SQLite.Core.targets')" />
