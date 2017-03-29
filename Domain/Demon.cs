@@ -25,6 +25,10 @@ namespace Yatagarasu.Domain
 
         public virtual Race Race { get; set; }
 
+        public virtual bool IsInParty { get; set; }
+
+        public virtual bool IsFused { get; set; }
+
         protected Demon() { }
 
         public Demon(int level, string name, Race race)

@@ -251,7 +251,7 @@ namespace Yatagarasu
                         if (e.ColumnIndex == COLUMN_IN_PARTY )
                         {
                             rowDemon.InParty = Math.Abs(1 - rowDemon.InParty);
-                            _dbSession.SaveOrUpdate(rowDemon);
+                            //_dbSession.SaveOrUpdate(rowDemon);
                         }
                         else if (e.ColumnIndex == COLUMN_NAME)
                         {

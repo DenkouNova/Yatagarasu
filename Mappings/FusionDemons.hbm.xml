@@ -3,6 +3,7 @@
                   assembly="Yatagarasu"
                   namespace="Yatagarasu.Domain">
 
+  <!--
   <class name="FusionDemon" table="FusionDemons">
     <id name="Id">
       <generator class="increment" />
@@ -12,5 +13,16 @@
     <property name="IdDemon2" />
     <property name="IdDemon3" />
   </class>
+  -->
 
+  <class name="FusionDemon" table="FusionDemons">
+    <id name="Id">
+      <generator class="increment" />
+    </id>
+    <property name="IdGame" />
+    <many-to-one name="Demon1" class="Demon" column="IdDemon1"/>
+    <many-to-one name="Demon2" class="Demon" column="IdDemon2"/>
+    <many-to-one name="Demon3" class="Demon" column="IdDemon3"/>
+  </class>
+  
 </hibernate-mapping>

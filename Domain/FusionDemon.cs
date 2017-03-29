@@ -12,6 +12,31 @@ namespace Yatagarasu.Domain
     {
         public FusionDemon() { }
 
+        public FusionDemon(int idGame, Demon d1, Demon d2, Demon d3)
+        {
+            IdGame = idGame;
+
+            Demon1 = d1;
+            Demon2 = d2;
+            Demon3 = d3;
+        }
+
+        public virtual int Id { get; set; }
+        public virtual int IdGame { get; set; }
+
+        public virtual Demon Demon1 { get; set; }
+        public virtual Demon Demon2 { get; set; }
+        public virtual Demon Demon3 { get; set; }
+
+        public override string ToString()
+        {
+            return
+                "Demon1 = " + FeatherStrings.TraceString(Demon1.ToString()) +
+                ", Demon2 = " + FeatherStrings.TraceString(Demon2.ToString()) +
+                ", Demon3 = " + FeatherStrings.TraceString(Demon3 == null ? "(null)" : Demon3.ToString());
+        }
+
+        /*
         public FusionDemon(int idGame, int d1, int d2, int? d3)
         {
             IdGame = idGame;
@@ -35,5 +60,6 @@ namespace Yatagarasu.Domain
                 ", IdDemon2 = " + FeatherStrings.TraceString(IdDemon2) +
                 ", IdDemon3 = " + FeatherStrings.TraceString(IdDemon3 == null ? "(null)" : IdDemon3.ToString());
         }
+        */
     }
 }

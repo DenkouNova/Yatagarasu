@@ -42,6 +42,8 @@ namespace Yatagarasu.Domain
             set { fusionDemons = value; }
         }
 
+        public virtual Dictionary<int, Demon> demonsById { get; set; }
+
         public override string ToString()
         {
             return "Id = " + FeatherStrings.TraceString(Id) +
