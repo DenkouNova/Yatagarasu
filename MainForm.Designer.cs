@@ -33,9 +33,12 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label3 = new System.Windows.Forms.Label();
             this.dgvDemons = new System.Windows.Forms.DataGridView();
+            this.dgvDemons_Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvDemons_Level = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvDemons_Race = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvDemons_Name = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tlpTierOneLeft = new System.Windows.Forms.TableLayoutPanel();
             this.pGame = new System.Windows.Forms.Panel();
-            this.lbCurrentGame = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.pFamilies = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -44,10 +47,7 @@
             this.dgvRaces = new System.Windows.Forms.DataGridView();
             this.dgvRaces_Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvRaces_Name = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dgvDemons_Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dgvDemons_Level = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dgvDemons_Race = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dgvDemons_Name = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btnCurrentGame = new System.Windows.Forms.Button();
             this.tlpMain.SuspendLayout();
             this.panel2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -127,6 +127,32 @@
             this.dgvDemons.Size = new System.Drawing.Size(436, 645);
             this.dgvDemons.TabIndex = 3;
             // 
+            // dgvDemons_Id
+            // 
+            this.dgvDemons_Id.HeaderText = "Id";
+            this.dgvDemons_Id.Name = "dgvDemons_Id";
+            this.dgvDemons_Id.ReadOnly = true;
+            this.dgvDemons_Id.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvDemons_Id.Width = 40;
+            // 
+            // dgvDemons_Level
+            // 
+            this.dgvDemons_Level.HeaderText = "Lv";
+            this.dgvDemons_Level.Name = "dgvDemons_Level";
+            this.dgvDemons_Level.Width = 40;
+            // 
+            // dgvDemons_Race
+            // 
+            this.dgvDemons_Race.HeaderText = "Race";
+            this.dgvDemons_Race.Name = "dgvDemons_Race";
+            // 
+            // dgvDemons_Name
+            // 
+            this.dgvDemons_Name.HeaderText = "Name";
+            this.dgvDemons_Name.Name = "dgvDemons_Name";
+            this.dgvDemons_Name.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvDemons_Name.Width = 180;
+            // 
             // tlpTierOneLeft
             // 
             this.tlpTierOneLeft.ColumnCount = 1;
@@ -145,23 +171,13 @@
             // pGame
             // 
             this.pGame.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pGame.Controls.Add(this.lbCurrentGame);
             this.pGame.Controls.Add(this.label1);
+            this.pGame.Controls.Add(this.btnCurrentGame);
             this.pGame.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pGame.Location = new System.Drawing.Point(3, 3);
             this.pGame.Name = "pGame";
             this.pGame.Size = new System.Drawing.Size(288, 74);
             this.pGame.TabIndex = 0;
-            // 
-            // lbCurrentGame
-            // 
-            this.lbCurrentGame.Font = new System.Drawing.Font("MS Mincho", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbCurrentGame.Location = new System.Drawing.Point(1, 17);
-            this.lbCurrentGame.Name = "lbCurrentGame";
-            this.lbCurrentGame.Size = new System.Drawing.Size(282, 56);
-            this.lbCurrentGame.TabIndex = 1;
-            this.lbCurrentGame.Text = "$lbCurrentGame";
-            this.lbCurrentGame.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label1
             // 
@@ -245,31 +261,16 @@
             this.dgvRaces_Name.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvRaces_Name.Width = 175;
             // 
-            // dgvDemons_Id
+            // btnCurrentGame
             // 
-            this.dgvDemons_Id.HeaderText = "Id";
-            this.dgvDemons_Id.Name = "dgvDemons_Id";
-            this.dgvDemons_Id.ReadOnly = true;
-            this.dgvDemons_Id.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvDemons_Id.Width = 40;
-            // 
-            // dgvDemons_Level
-            // 
-            this.dgvDemons_Level.HeaderText = "Lv";
-            this.dgvDemons_Level.Name = "dgvDemons_Level";
-            this.dgvDemons_Level.Width = 40;
-            // 
-            // dgvDemons_Race
-            // 
-            this.dgvDemons_Race.HeaderText = "Race";
-            this.dgvDemons_Race.Name = "dgvDemons_Race";
-            // 
-            // dgvDemons_Name
-            // 
-            this.dgvDemons_Name.HeaderText = "Name";
-            this.dgvDemons_Name.Name = "dgvDemons_Name";
-            this.dgvDemons_Name.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvDemons_Name.Width = 180;
+            this.btnCurrentGame.Font = new System.Drawing.Font("MS Mincho", 14.25F);
+            this.btnCurrentGame.Location = new System.Drawing.Point(3, 19);
+            this.btnCurrentGame.Name = "btnCurrentGame";
+            this.btnCurrentGame.Size = new System.Drawing.Size(283, 55);
+            this.btnCurrentGame.TabIndex = 4;
+            this.btnCurrentGame.Text = "$lbCurrentGame";
+            this.btnCurrentGame.UseVisualStyleBackColor = true;
+            this.btnCurrentGame.Click += new System.EventHandler(this.btnCurrentGame_Click);
             // 
             // MainForm
             // 
@@ -279,6 +280,7 @@
             this.Controls.Add(this.tlpMain);
             this.Name = "MainForm";
             this.Text = "MainForm2";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.tlpMain.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
@@ -302,7 +304,6 @@
         private System.Windows.Forms.TableLayoutPanel tlpMain;
         private System.Windows.Forms.TableLayoutPanel tlpTierOneLeft;
         private System.Windows.Forms.Panel pGame;
-        private System.Windows.Forms.Label lbCurrentGame;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel pFamilies;
         private System.Windows.Forms.Panel panel1;
@@ -319,5 +320,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvDemons_Level;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvDemons_Race;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvDemons_Name;
+        private System.Windows.Forms.Button btnCurrentGame;
     }
 }

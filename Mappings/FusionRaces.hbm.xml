@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                  assembly="Yatagarasu"
+                  namespace="Yatagarasu.Domain">
+
+  <class name="FusionRace" table="FusionRaces">
+    <id name="Id">
+      <generator class="increment" />
+    </id>
+    <property name="IdGame" />
+    <property name="IdRace1" />
+    <property name="IdRace2" />
+    <property name="IdRace3" />
+  </class>
+
+</hibernate-mapping>

@@ -28,6 +28,20 @@ namespace Yatagarasu.Domain
             set { races = value; }
         }
 
+        private ISet<FusionRace> fusionRaces = new HashSet<FusionRace>();
+        public virtual ISet<FusionRace> FusionRaces
+        {
+            get { return fusionRaces; }
+            set { fusionRaces = value; }
+        }
+
+        private ISet<FusionDemon> fusionDemons = new HashSet<FusionDemon>();
+        public virtual ISet<FusionDemon> FusionDemons
+        {
+            get { return fusionDemons; }
+            set { fusionDemons = value; }
+        }
+
         public override string ToString()
         {
             return "Id = " + FeatherStrings.TraceString(Id) +

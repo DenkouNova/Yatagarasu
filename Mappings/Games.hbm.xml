@@ -14,6 +14,21 @@
       </key>
       <one-to-many class="Race"/>
     </set>
+
+    <set name="FusionRaces" inverse="true">
+      <key>
+        <column name="IdGame"/>
+      </key>
+      <one-to-many class="FusionRace"/>
+    </set>
+
+    <set name="FusionDemons" inverse="true">
+      <key>
+        <column name="IdGame"/>
+      </key>
+      <one-to-many class="FusionDemon"/>
+    </set>
+    
   </class>
 
 </hibernate-mapping>

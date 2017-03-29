@@ -35,7 +35,11 @@ namespace Yatagarasu
         private const int DGV_DEMON_COL_LEVEL = 1;
         private const int DGV_DEMON_COL_RACE = 2;
         private const int DGV_DEMON_COL_NAME = 3;
-        
+
+        private const int IMPOSSIBLE_TO_FUSE_RACE = 0;
+
+        private bool _changesWereDone = false;
+
         public MainForm()
         {
             InitializeComponent();
@@ -48,7 +52,7 @@ namespace Yatagarasu
 
         private void ResetControlsTextAndStuff()
         {
-            this.lbCurrentGame.Text = "";
+            this.btnCurrentGame.Text = "";
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -69,6 +73,7 @@ namespace Yatagarasu
                 var currentGame = GlobalObjects.CurrentGame;
                 UpdateGameLabel(currentGame.Name);
                 UpdateRacesGrid();
+                UpdateDemonsGrid();
             }
         }
 
@@ -108,9 +113,9 @@ namespace Yatagarasu
 
         private void UpdateGameLabel(string gameName)
         {
-            this.lbCurrentGame.Text = gameName;
+            this.btnCurrentGame.Text = gameName;
             float fontSize = 150F / gameName.Length;
-            this.lbCurrentGame.Font = new System.Drawing.Font("MS Mincho", fontSize, 
+            this.btnCurrentGame.Font = new System.Drawing.Font("MS Mincho", fontSize, 
                 System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
         }
 
@@ -128,7 +133,24 @@ namespace Yatagarasu
             AddHandlers();
         }
 
+        private void UpdateDemonsGrid()
+        {
+            RemoveHandlers();
+            var allDemons = GlobalObjects.CurrentGame.Races.SelectMany(x => x.Demons).OrderBy(y => y.Level).ThenBy(y => y.Name);
 
+            foreach (Domain.Demon oneDemon in allDemons)
+            {
+                var demonRow = new Object[4];
+
+                demonRow[DGV_DEMON_COL_ID] = oneDemon.Id;
+                demonRow[DGV_DEMON_COL_LEVEL] = oneDemon.Level;
+                demonRow[DGV_DEMON_COL_RACE] = oneDemon.Race.Name;
+                demonRow[DGV_DEMON_COL_NAME] = oneDemon.Name;
+
+                this.dgvDemons.Rows.Add(demonRow);
+            }
+            AddHandlers();
+        }
 
 
 
@@ -223,11 +245,23 @@ namespace Yatagarasu
                     {
                         using (var transaction = _dbSession.BeginTransaction())
                         {
+                            _changesWereDone = true;
+
+                            var allDemonsSoFar = GlobalObjects.CurrentGame.Races.SelectMany(x => x.Demons);
+
                             var newDemon = new Domain.Demon(demonLevel, demonName, demonRace);
                             _dbSession.Save(newDemon);
                             demonRace.Demons.Add(newDemon);
+
+                            foreach (Domain.Demon oneDemon in allDemonsSoFar)
+                            {
+                                var newFusion = new Domain.FusionDemon(
+                                    GlobalObjects.CurrentGame.Id, oneDemon.Id, newDemon.Id, null);
+                                GlobalObjects.CurrentGame.FusionDemons.Add(newFusion);
+                            }
+
                             RemoveHandlers();
-                            this.dgvRaces.Rows[this.dgvRaces.Rows.Count - 2].Cells[DGV_RACE_COL_ID].Value = newDemon.Id;
+                            this.dgvDemons.Rows[this.dgvDemons.Rows.Count - 2].Cells[DGV_DEMON_COL_ID].Value = newDemon.Id;
                             AddHandlers();
                             transaction.Commit();
                         }
@@ -301,9 +335,21 @@ namespace Yatagarasu
                         {
                             using (var transaction = _dbSession.BeginTransaction())
                             {
+                                _changesWereDone = true;
+                                var allRacesSoFar = GlobalObjects.CurrentGame.Races
+                                    .Where(x => x.Id != IMPOSSIBLE_TO_FUSE_RACE).ToList();
+
                                 var newRace = new Domain.Race(raceName, GlobalObjects.CurrentGame);
                                 _dbSession.Save(newRace);
                                 GlobalObjects.CurrentGame.Races.Add(newRace);
+
+                                foreach (Domain.Race oneRace in allRacesSoFar)
+                                {
+                                    var newFusion = new Domain.FusionRace(
+                                        GlobalObjects.CurrentGame.Id, oneRace.Id, newRace.Id, null);
+                                    GlobalObjects.CurrentGame.FusionRaces.Add(newFusion);
+                                }
+
                                 RemoveHandlers();
                                 this.dgvRaces.Rows[this.dgvRaces.Rows.Count - 2].Cells[DGV_RACE_COL_ID].Value = newRace.Id;
                                 AddHandlers();
@@ -327,6 +373,53 @@ namespace Yatagarasu
             _addingRace = true;
         }
         #endregion
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (_changesWereDone)
+            {
+                var result = MessageBox.Show("Save changes?", "Pressing OK will quit and save changes.", MessageBoxButtons.OKCancel);
+                if (result == DialogResult.OK)
+                {
+                    SaveChanges();
+                }
+                else
+                {
+                    e.Cancel = true;
+                }
+            }
+        }
+
+        private void SaveChanges()
+        {
+            using (var transaction = _dbSession.BeginTransaction())
+            {
+                foreach (var oneFusionRace in GlobalObjects.CurrentGame.FusionRaces)
+                {
+                    _dbSession.Save(oneFusionRace);
+                }
+                foreach (var oneFusionDemon in GlobalObjects.CurrentGame.FusionDemons)
+                {
+                    _dbSession.Save(oneFusionDemon);
+                }
+                _changesWereDone = false;
+                transaction.Commit();
+            }
+            MessageBox.Show("Saved.");
+        }
+
+        private void btnCurrentGame_Click(object sender, EventArgs e)
+        {
+            if (_changesWereDone)
+            {
+                MessageBox.Show("Will save changes");
+                SaveChanges();
+            }
+            else
+            {
+                MessageBox.Show("No changes to save.");
+            }
+        }
 
     }
 }
