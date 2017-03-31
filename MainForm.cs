@@ -26,8 +26,12 @@ namespace Yatagarasu
         private bool _cellDemonChanged = false;
         private bool _demonFusionStatusChanged = false;
 
+        private bool _cellFusionChanged = false;
+
         private bool _addingRace = false;
         private bool _cellRaceChanged = false;
+
+        private bool _needToRecalculateRowFusionIndexes = false;
 
         private const int DGV_RACE_COL_ID = 0;
         private const int DGV_RACE_COL_NAME = 1;
@@ -40,15 +44,12 @@ namespace Yatagarasu
         private const int DGV_DEMON_COL_NAME = 5;
 
         private const int DGV_DEMONFUSION_COL_ID = 0;
-
         private const int DGV_DEMONFUSION_COL_LEVEL1 = 1;
         private const int DGV_DEMONFUSION_COL_RACE1 = 2;
         private const int DGV_DEMONFUSION_COL_NAME1 = 3;
-
         private const int DGV_DEMONFUSION_COL_LEVEL2 = 4;
         private const int DGV_DEMONFUSION_COL_RACE2 = 5;
         private const int DGV_DEMONFUSION_COL_NAME2 = 6;
-
         private const int DGV_DEMONFUSION_COL_LEVEL3 = 7;
         private const int DGV_DEMONFUSION_COL_RACE3 = 8;
         private const int DGV_DEMONFUSION_COL_NAME3 = 9;
@@ -94,10 +95,18 @@ namespace Yatagarasu
                 currentGame.demonsById = currentGame.Races.SelectMany(x => x.Demons)
                     .ToDictionary(d => d.Id);
 
+                GlobalObjects.ImpossibleToFuseRace = _dbSession.Get<Domain.Race>(0);
+
+                RemoveHandlers();
+
                 UpdateGameLabel(currentGame.Name);
                 UpdateRacesGrid();
                 UpdateDemonsGrid();
                 UpdateDemonFusionsGrid();
+
+                RecalculateFusionRowIndexes();
+
+                AddHandlers();
             }
         }
 
@@ -116,6 +125,13 @@ namespace Yatagarasu
                 new DataGridViewCellEventHandler(dgvDemons_CellValueChanged);
             this.dgvDemons.RowsAdded +=
                 new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dgvDemons_RowsAdded);
+
+            this.dgvFusions.CellValidating +=
+                new DataGridViewCellValidatingEventHandler(dgvFusions_CellValidating);
+            this.dgvFusions.CellValueChanged +=
+                new DataGridViewCellEventHandler(dgvFusions_CellValueChanged);
+            this.dgvFusions.Sorted += new EventHandler(dgvFusions_Sorted);
+
         }
 
         private void RemoveHandlers()
@@ -133,6 +149,17 @@ namespace Yatagarasu
                 new DataGridViewCellEventHandler(dgvDemons_CellValueChanged);
             this.dgvDemons.RowsAdded -=
                 new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dgvDemons_RowsAdded);
+
+            this.dgvFusions.CellValidating -=
+                new DataGridViewCellValidatingEventHandler(dgvFusions_CellValidating);
+            this.dgvFusions.CellValueChanged -=
+                new DataGridViewCellEventHandler(dgvFusions_CellValueChanged);
+            this.dgvFusions.Sorted -= new EventHandler(dgvFusions_Sorted);
+        }
+
+        private void dgvFusions_Sorted(object sender, EventArgs e)
+        {
+            _needToRecalculateRowFusionIndexes = true;
         }
 
         private void UpdateGameLabel(string gameName)
@@ -145,7 +172,6 @@ namespace Yatagarasu
 
         private void UpdateRacesGrid()
         {
-            RemoveHandlers();
             var allRaces = GlobalObjects.CurrentGame.Races;
             foreach(Domain.Race oneRace in allRaces)
             {
@@ -154,12 +180,10 @@ namespace Yatagarasu
                 raceRow[1] = oneRace.Name;
                 this.dgvRaces.Rows.Add(raceRow);
             }
-            AddHandlers();
         }
 
         private void UpdateDemonsGrid()
         {
-            RemoveHandlers();
             var allDemons = GlobalObjects.CurrentGame.Races.SelectMany(x => x.Demons).OrderBy(y => y.Level).ThenBy(y => y.Name);
 
             foreach (Domain.Demon oneDemon in allDemons)
@@ -175,54 +199,71 @@ namespace Yatagarasu
 
                 this.dgvDemons.Rows.Add(demonRow);
             }
-            AddHandlers();
         }
 
 
 
         private void UpdateDemonFusionsGrid()
         {
-            RemoveHandlers();
-            this.dgvFusions.Rows.Clear();
-            foreach (Domain.FusionDemon oneFusion in GlobalObjects.CurrentGame.FusionDemons)
+            try
             {
-                var demonFusionRow = new Object[12];
-
-                demonFusionRow[DGV_DEMONFUSION_COL_ID] = oneFusion.Id;
-
-                demonFusionRow[DGV_DEMONFUSION_COL_LEVEL1] = oneFusion.Demon1.Level;
-                demonFusionRow[DGV_DEMONFUSION_COL_RACE1] = oneFusion.Demon1.Race.Name;
-                demonFusionRow[DGV_DEMONFUSION_COL_NAME1] = oneFusion.Demon1.Name;
-
-                demonFusionRow[DGV_DEMONFUSION_COL_LEVEL2] = oneFusion.Demon2.Level;
-                demonFusionRow[DGV_DEMONFUSION_COL_RACE2] = oneFusion.Demon2.Race.Name;
-                demonFusionRow[DGV_DEMONFUSION_COL_NAME2] = oneFusion.Demon2.Name;
-
-                demonFusionRow[DGV_DEMONFUSION_COL_LEVEL3] = (oneFusion.Demon3 == null ? "" : oneFusion.Demon3.Level.ToString());
-                demonFusionRow[DGV_DEMONFUSION_COL_RACE3] = (oneFusion.Demon3 == null ? "" : oneFusion.Demon3.Race.Name.ToString());
-                demonFusionRow[DGV_DEMONFUSION_COL_NAME3] = (oneFusion.Demon3 == null ? "?" : oneFusion.Demon3.Name);
-
-                var rowIndex = this.dgvFusions.Rows.Add(demonFusionRow);
-                if (!oneFusion.Demon1.IsFused || !oneFusion.Demon2.IsFused)
+                this.dgvFusions.Rows.Clear();
+                foreach (Domain.FusionDemon oneFusion in GlobalObjects.CurrentGame.FusionDemons)
                 {
-                    this.dgvFusions.Rows[rowIndex].Visible = false;
+                    var demonFusionRow = new Object[12];
+
+                    demonFusionRow[DGV_DEMONFUSION_COL_ID] = oneFusion.Id;
+
+                    demonFusionRow[DGV_DEMONFUSION_COL_LEVEL1] = oneFusion.Demon1.Level;
+                    demonFusionRow[DGV_DEMONFUSION_COL_RACE1] = oneFusion.Demon1.Race.Name;
+                    demonFusionRow[DGV_DEMONFUSION_COL_NAME1] = oneFusion.Demon1.Name;
+
+                    demonFusionRow[DGV_DEMONFUSION_COL_LEVEL2] = oneFusion.Demon2.Level;
+                    demonFusionRow[DGV_DEMONFUSION_COL_RACE2] = oneFusion.Demon2.Race.Name;
+                    demonFusionRow[DGV_DEMONFUSION_COL_NAME2] = oneFusion.Demon2.Name;
+
+                    demonFusionRow[DGV_DEMONFUSION_COL_LEVEL3] =
+                        oneFusion.Demon3 != null ? oneFusion.Demon3.Level.ToString() :
+                        oneFusion.Level3 != null ? oneFusion.Level3.ToString() + "+" : "";
+                    demonFusionRow[DGV_DEMONFUSION_COL_RACE3] = 
+                        oneFusion.Demon3 != null ? oneFusion.Demon3.Race.Name.ToString() :
+                        oneFusion.Race3 != null ? oneFusion.Race3.Name : "";
+                    demonFusionRow[DGV_DEMONFUSION_COL_NAME3] = 
+                        oneFusion.Demon3 != null ? oneFusion.Demon3.Name :
+                        oneFusion.Race3 != null ? "?" : "";
+
+                    var rowIndex = this.dgvFusions.Rows.Add(demonFusionRow);
+                    if (!oneFusion.Demon1.IsFused || !oneFusion.Demon2.IsFused)
+                    {
+                        this.dgvFusions.Rows[rowIndex].Visible = false;
+                    }
                 }
-            }
 
-            if (this.dgvFusions.Rows.Count > 0)
+                if (this.dgvFusions.Rows.Count > 0)
+                {
+                    this.dgvFusions.Sort(this.dgvFusions_Level1, ListSortDirection.Ascending);
+                    this.dgvFusions.Sort(this.dgvFusions_Level3, ListSortDirection.Ascending);
+                }
+
+                
+            }
+            catch (Exception ex)
             {
-                this.dgvFusions.Sort(this.dgvFusions_Name3, ListSortDirection.Ascending);
-                this.dgvFusions.Sort(this.dgvFusions_Level3, ListSortDirection.Descending);
+                MessageBox.Show(_logger.Error(ex));
             }
+            
+        }
 
+
+        private void RecalculateFusionRowIndexes()
+        {
             DataGridFusionRowIndexesPerFusionId = new Dictionary<int, int>();
-            for(int i = 0; i < this.dgvFusions.Rows.Count; i++)
+            for (int i = 0; i < this.dgvFusions.Rows.Count; i++)
             {
                 var fusionId = Convert.ToInt32(this.dgvFusions.Rows[i].Cells[DGV_DEMONFUSION_COL_ID].Value);
                 DataGridFusionRowIndexesPerFusionId.Add(fusionId, i);
             }
-
-            AddHandlers();
+            _needToRecalculateRowFusionIndexes = true;
         }
 
 
@@ -285,7 +326,8 @@ namespace Yatagarasu
                     }
 
                     var demonName = this.dgvDemons.Rows[this.dgvDemons.Rows.Count - 2].Cells[DGV_DEMON_COL_NAME].Value.ToString();
-                    var demonExists = demonRace.Demons.Where(x => x.Name == demonName).FirstOrDefault() != null; // TODO search through all races
+                    var demonExists = GlobalObjects.CurrentGame.Races.SelectMany(x => x.Demons)
+                        .Where(x => x.Name == demonName).FirstOrDefault() != null;
 
                     if (demonExists)
                     {
@@ -497,6 +539,167 @@ namespace Yatagarasu
                 }
             }
         }
+
+
+
+
+
+        #region event handlers for fusions
+        private void dgvFusions_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+            string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
+            _logger.OpenSection(location);
+
+            _logger.Info("Called with row index " + e.RowIndex + ", column index = " + e.ColumnIndex);
+            var currentRow = this.dgvFusions.Rows[e.RowIndex];
+
+            int numberOfNonNullColumns =
+                (currentRow.Cells[DGV_DEMONFUSION_COL_LEVEL3].Value == null ? 0 : 1) +
+                (currentRow.Cells[DGV_DEMONFUSION_COL_RACE3].Value == null ? 0 : 1) +
+                (currentRow.Cells[DGV_DEMONFUSION_COL_NAME3].Value == null ? 0 : 1) ;
+
+            var oldValue = currentRow.Cells[e.ColumnIndex].Value;
+            if (oldValue != null) oldValue = oldValue.ToString();
+            var newValue = e.FormattedValue;
+            if (newValue != null) newValue = newValue.ToString();            
+            _logger.Info("oldValue = " + (oldValue == null ? "(null)" : "'" + oldValue.ToString() + "'"));
+            _logger.Info("newValue = " + (newValue == null ? "(null)" : "'" + newValue.ToString() + "'"));
+
+            _logger.Info("numberOfNonNullColumns = " + numberOfNonNullColumns);
+
+            _cellFusionChanged = (numberOfNonNullColumns >= 2 && oldValue != newValue);
+
+            _logger.Info("Cell changed set to " + _cellFusionChanged);
+            _logger.CloseSection(location);
+        }
+
+        private void dgvFusions_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (_cellFusionChanged)
+            {
+                string location = this.GetType().FullName + "." + MethodBase.GetCurrentMethod().Name;
+                _logger.OpenSection(location);
+
+                _logger.Info("Called with row index " + e.RowIndex + ", column index = " + e.ColumnIndex);
+                var currentRow = this.dgvFusions.Rows[e.RowIndex];
+
+                var race1Name = currentRow.Cells[DGV_DEMONFUSION_COL_RACE1].Value.ToString();
+                var race2Name = currentRow.Cells[DGV_DEMONFUSION_COL_RACE2].Value.ToString();
+                var demon3Name = currentRow.Cells[DGV_DEMONFUSION_COL_NAME3].Value.ToString();
+
+                if (!String.IsNullOrEmpty(demon3Name))
+                {
+                    var idFusion = currentRow.Cells[DGV_DEMONFUSION_COL_ID].Value.ToString();
+                    var fusionObject = GlobalObjects.CurrentGame.FusionDemons
+                        .Where(x => x.Id == Convert.ToInt32(idFusion)).FirstOrDefault();
+
+                    var resultDemonObject = GlobalObjects.CurrentGame.Races.SelectMany(x => x.Demons)
+                        .Where(x => x.Name == demon3Name).FirstOrDefault();
+
+                    if (resultDemonObject == null)
+                    {
+                        MessageBox.Show("This demon does not exist.");
+                        return;
+                    }
+
+                    var raceObject1 = GlobalObjects.CurrentGame.Races.Where(x => x.Name == race1Name)
+                        .FirstOrDefault();
+                    var raceObject2 = GlobalObjects.CurrentGame.Races.Where(x => x.Name == race2Name)
+                        .FirstOrDefault();
+                    var raceObject3 = resultDemonObject.Race;
+
+                    var fusionRaceObject = GlobalObjects.CurrentGame.FusionRaces.Where(x =>
+                        (x.IdRace1 == raceObject1.Id && x.IdRace2 == raceObject2.Id) ||
+                        (x.IdRace1 == raceObject2.Id && x.IdRace2 == raceObject1.Id))
+                        .FirstOrDefault();
+                    fusionRaceObject.IdRace3 = raceObject3.Id;
+
+                    var fusionDemonsToUpdate = GlobalObjects.CurrentGame.FusionDemons.Where(x =>
+                        (x.Demon1.Race.Id == raceObject1.Id && x.Demon2.Race.Id == raceObject2.Id) ||
+                        (x.Demon1.Race.Id == raceObject2.Id && x.Demon2.Race.Id == raceObject1.Id)).ToList();
+
+                    RemoveHandlers();
+
+                    if (_needToRecalculateRowFusionIndexes)
+                    {
+                        RecalculateFusionRowIndexes();
+                    }
+
+                    // calulate fusions
+                    foreach (var oneFusionDemon in fusionDemonsToUpdate)
+                    {
+                        var fusionTuple = 
+                            FindDemonFromFusion(oneFusionDemon.Demon1, oneFusionDemon.Demon2, fusionRaceObject);
+
+                        if (fusionTuple.Item1 != null)
+                        {
+                            oneFusionDemon.Demon3 = fusionTuple.Item1;
+                        }
+                        else
+                        {
+                            oneFusionDemon.Level3 = fusionTuple.Item2;
+                            oneFusionDemon.Race3 = fusionTuple.Item3;
+                        }
+
+                        var gridIndex = this.DataGridFusionRowIndexesPerFusionId[oneFusionDemon.Id];
+                        var fusionRowToUpdate = this.dgvFusions.Rows[gridIndex];
+
+                        fusionRowToUpdate.Cells[DGV_DEMONFUSION_COL_LEVEL3].Value =
+                            (fusionTuple.Item2 > 0 ? fusionTuple.Item2.ToString() : "");
+                        fusionRowToUpdate.Cells[DGV_DEMONFUSION_COL_RACE3].Value =
+                            fusionTuple.Item3.Name;
+                        fusionRowToUpdate.Cells[DGV_DEMONFUSION_COL_NAME3].Value =
+                            (oneFusionDemon.Demon3 != null ? oneFusionDemon.Demon3.Name : "?");
+
+                        _changesWereDone = true;
+                    }
+                    AddHandlers();
+                }
+            }
+        }
+        #endregion
+
+
+        private Tuple<Domain.Demon, int, Domain.Race> FindDemonFromFusion(
+            Domain.Demon d1, Domain.Demon d2, Domain.FusionRace f)
+        {
+            // TODO rework
+            Domain.Demon returnDemon = null;
+            int returnLevel = -1;
+            Domain.Race returnRace = GlobalObjects.ImpossibleToFuseRace;
+
+            if (f != null)
+            {
+                if (f.IdRace3 == GlobalObjects.ImpossibleToFuseRace.Id)
+                {
+                    returnDemon = _dbSession.Get<Domain.Demon>(0);
+                }
+                else
+                {
+                    /*
+                    returnDemon = _dbSession.CreateCriteria<Domain.Demon>().List<Domain.Demon>()
+                    .Where(x =>
+                        x.Race.Id == f.IdRace3 &&
+                        x.Level > (d1.Level + d2.Level) / 2)
+                    .OrderBy(x => x.Level)
+
+                }                    .FirstOrDefault();*/
+
+                    returnRace = GlobalObjects.CurrentGame.Races.Where(x => x.Id == f.IdRace3).FirstOrDefault();
+                    returnLevel = ((int)((int)(d1.Level + d2.Level) / 2));
+
+                    returnDemon = GlobalObjects.CurrentGame.demonsById.Values
+                        .Where(x =>
+                        x.Race.Id == f.IdRace3 &&
+                        x.Level > (d1.Level + d2.Level) / 2)
+                    .OrderBy(x => x.Level)
+                    .FirstOrDefault();
+                }
+
+            }
+            return new Tuple<Domain.Demon, int, Domain.Race>(returnDemon, returnLevel, returnRace);
+        }
+
 
         private void SaveChanges(bool exiting = false)
         {

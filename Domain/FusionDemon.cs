@@ -28,6 +28,9 @@ namespace Yatagarasu.Domain
         public virtual Demon Demon2 { get; set; }
         public virtual Demon Demon3 { get; set; }
 
+        public virtual Race Race3 { get; set; }
+        public virtual int? Level3 { get; set; }
+
         public override string ToString()
         {
             return

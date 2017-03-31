@@ -48,7 +48,7 @@ namespace Yatagarasu
             set { _exiting = value; }
         }
 
-        //public static Domain.Race ImpossibleToFuseRace { get; set; }
+        public static Domain.Race ImpossibleToFuseRace { get; set; }
 
         private static FeatherLogger CreateFeatherLogger()
         {

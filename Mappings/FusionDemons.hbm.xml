@@ -23,6 +23,8 @@
     <many-to-one name="Demon1" class="Demon" column="IdDemon1"/>
     <many-to-one name="Demon2" class="Demon" column="IdDemon2"/>
     <many-to-one name="Demon3" class="Demon" column="IdDemon3"/>
+    <many-to-one name="Race3" class="Race" column="IdRace3"/>
+    <property name="Level3" />
   </class>
   
 </hibernate-mapping>
