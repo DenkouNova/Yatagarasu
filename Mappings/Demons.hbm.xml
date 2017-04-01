@@ -9,8 +9,8 @@
     </id>
     <property name="Level" />
     <property name="Name" />
-    <!--<property name="InParty" />
-    <property name="UseInFusionCalculator" />-->
+    <property name="IsInParty" />
+    <property name="IsFused" />
 
     <many-to-one name="Race" class="Race" column="IdRace"/>
   </class>

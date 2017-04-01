@@ -105,41 +105,6 @@ namespace Yatagarasu
 
             return returnStyle;
         }
-        /*
-
-        public static Domain.Race InsertRaceMaybe(string raceName)
-        {
-            string location = new StackFrame().GetMethod().DeclaringType.ToString(); 
-            _logger.OpenSection(location);
-
-            string message = "Inserting new family '" + raceName + "'";
-            _logger.Info("Asking user: '" + message + "'");
-
-            Domain.Race returnRace = null;
-
-            DialogResult dr = MessageBox.Show(message, "New family",
-                MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
-            if (dr == DialogResult.Cancel)
-            {
-                _logger.Info("User cancelled; race will not be inserted.");
-            }
-            else
-            {
-                var insertedRace = new Domain.Race()
-                {
-                    Name = raceName,
-                    Game = GlobalObjects.CurrentGame
-                };
-                _logger.Info("Inserting race...");
-                _dbSession.Save(insertedRace);
-                _logger.Info("Inserted race: " + insertedRace.ToString());
-                returnRace = insertedRace;
-            }
-
-            _logger.CloseSection(location);
-            return returnRace;
-        }
-        */
 
     }
 }

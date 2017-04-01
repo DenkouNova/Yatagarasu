@@ -58,6 +58,9 @@ namespace Yatagarasu
 
         private bool _changesWereDone = false;
 
+        private const int DGV_FUSIONS_FONT_SIZE = 12;
+        private const int DGV_DEMONS_FONT_SIZE = 12;
+
         private Dictionary<int, int> DataGridFusionRowIndexesPerFusionId;
 
         public MainForm()
@@ -199,6 +202,22 @@ namespace Yatagarasu
 
                 this.dgvDemons.Rows.Add(demonRow);
             }
+
+            foreach(DataGridViewRow dr in this.dgvDemons.Rows)
+            {
+                dr.Cells[DGV_DEMON_COL_INPARTY].Style =
+                dr.Cells[DGV_DEMON_COL_FUSE].Style =
+                GlobalObjects.GetDefaultDgvcStyle(fontSize: DGV_DEMONS_FONT_SIZE, enabled: true);
+
+                dr.Cells[DGV_DEMON_COL_LEVEL].Style =
+                    dr.Cells[DGV_DEMON_COL_RACE].Style =
+                    dr.Cells[DGV_DEMON_COL_NAME].Style =
+                    GlobalObjects.GetDefaultDgvcStyle(fontSize: DGV_DEMONS_FONT_SIZE, enabled: true);
+
+                dr.Cells[DGV_DEMON_COL_INPARTY].ReadOnly =
+                    dr.Cells[DGV_DEMON_COL_FUSE].ReadOnly = false;
+            }
+
         }
 
 
@@ -233,10 +252,14 @@ namespace Yatagarasu
                         oneFusion.Race3 != null ? "?" : "";
 
                     var rowIndex = this.dgvFusions.Rows.Add(demonFusionRow);
+
                     if (!oneFusion.Demon1.IsFused || !oneFusion.Demon2.IsFused)
                     {
                         this.dgvFusions.Rows[rowIndex].Visible = false;
                     }
+
+                    UpdateFusionRowDisplay(this.dgvFusions.Rows[rowIndex],
+                        oneFusion.Demon1, oneFusion.Demon2, oneFusion.Demon3);
                 }
 
                 if (this.dgvFusions.Rows.Count > 0)
@@ -244,8 +267,6 @@ namespace Yatagarasu
                     this.dgvFusions.Sort(this.dgvFusions_Level1, ListSortDirection.Ascending);
                     this.dgvFusions.Sort(this.dgvFusions_Level3, ListSortDirection.Ascending);
                 }
-
-                
             }
             catch (Exception ex)
             {
@@ -254,6 +275,35 @@ namespace Yatagarasu
             
         }
 
+        private void UpdateFusionRowDisplay(
+            DataGridViewRow currentFusionRow, Domain.Demon demon1, Domain.Demon demon2, Domain.Demon demon3)
+        {
+            currentFusionRow.Cells[DGV_DEMONFUSION_COL_ID].Style = GlobalObjects.GetDefaultDgvcStyle(DGV_FUSIONS_FONT_SIZE);
+
+            currentFusionRow.Cells[DGV_DEMONFUSION_COL_LEVEL1].ReadOnly =
+                currentFusionRow.Cells[DGV_DEMONFUSION_COL_RACE1].ReadOnly =
+                currentFusionRow.Cells[DGV_DEMONFUSION_COL_NAME1].ReadOnly =
+                currentFusionRow.Cells[DGV_DEMONFUSION_COL_LEVEL2].ReadOnly =
+                currentFusionRow.Cells[DGV_DEMONFUSION_COL_RACE2].ReadOnly =
+                currentFusionRow.Cells[DGV_DEMONFUSION_COL_NAME2].ReadOnly = true;
+
+            currentFusionRow.Cells[DGV_DEMONFUSION_COL_LEVEL1].Style =
+              currentFusionRow.Cells[DGV_DEMONFUSION_COL_RACE1].Style =
+              currentFusionRow.Cells[DGV_DEMONFUSION_COL_NAME1].Style = GlobalObjects.GetDefaultDgvcStyle
+                (fontSize: DGV_FUSIONS_FONT_SIZE, enabled: false, inParty: demon1.IsInParty);
+
+            currentFusionRow.Cells[DGV_DEMONFUSION_COL_LEVEL2].Style =
+              currentFusionRow.Cells[DGV_DEMONFUSION_COL_RACE2].Style =
+              currentFusionRow.Cells[DGV_DEMONFUSION_COL_NAME2].Style = GlobalObjects.GetDefaultDgvcStyle
+                (fontSize: DGV_FUSIONS_FONT_SIZE, enabled: false, inParty: demon2.IsInParty);
+
+            currentFusionRow.Cells[DGV_DEMONFUSION_COL_LEVEL3].Style =
+              currentFusionRow.Cells[DGV_DEMONFUSION_COL_RACE3].Style =
+              currentFusionRow.Cells[DGV_DEMONFUSION_COL_NAME3].Style = GlobalObjects.GetDefaultDgvcStyle (
+                fontSize: DGV_FUSIONS_FONT_SIZE,
+                enabled: demon3 == null,
+                inParty: demon3 == null ? false : demon3.IsInParty);
+        }
 
         private void RecalculateFusionRowIndexes()
         {
@@ -353,6 +403,23 @@ namespace Yatagarasu
                     {
                         using (var transaction = _dbSession.BeginTransaction())
                         {
+                            if (!_changesWereDone)
+                            {
+                                foreach(DataGridViewRow dr in dgvDemons.Rows)
+                                {
+                                    dr.Cells[DGV_DEMON_COL_INPARTY].Style = 
+                                        dr.Cells[DGV_DEMON_COL_FUSE].Style =
+                                        GlobalObjects.GetDefaultDgvcStyle(fontSize: DGV_DEMONS_FONT_SIZE, enabled: false);
+
+                                    dr.Cells[DGV_DEMON_COL_LEVEL].Style =
+                                        dr.Cells[DGV_DEMON_COL_RACE].Style =
+                                        dr.Cells[DGV_DEMON_COL_NAME].Style =
+                                        GlobalObjects.GetDefaultDgvcStyle(fontSize: DGV_DEMONS_FONT_SIZE, enabled: true);
+
+                                    dr.Cells[DGV_DEMON_COL_INPARTY].ReadOnly =
+                                        dr.Cells[DGV_DEMON_COL_FUSE].ReadOnly = false;
+                                }
+                            }
                             _changesWereDone = true;
 
                             var allDemonsSoFar = GlobalObjects.CurrentGame.Races.SelectMany(x => x.Demons).ToList();
@@ -366,17 +433,48 @@ namespace Yatagarasu
                             {
                                 var fusionRaceObject = GlobalObjects.CurrentGame.FusionRaces.Where
                                     (x => 
-                                        x.IdRace1 == oneDemon.Race.Id && x.IdRace2 == newDemon.Race.Id ||
-                                        x.IdRace2 == oneDemon.Race.Id && x.IdRace1 == newDemon.Race.Id)
+                                        (x.IdRace1 == oneDemon.Race.Id && x.IdRace2 == newDemon.Race.Id) ||
+                                        (x.IdRace2 == oneDemon.Race.Id && x.IdRace1 == newDemon.Race.Id))
                                         .FirstOrDefault();
 
                                 var resultDemon = fusionRaceObject == null ? null :
                                     FindDemonFromFusion(oneDemon, newDemon, fusionRaceObject).Item1;
 
-                                var newFusion = newDemon.Level < oneDemon.Level ?
+                                var newFusion = newDemon.Level > oneDemon.Level ?
                                     new Domain.FusionDemon(GlobalObjects.CurrentGame.Id, oneDemon, newDemon, resultDemon) :
                                     new Domain.FusionDemon(GlobalObjects.CurrentGame.Id, newDemon, oneDemon, resultDemon);
                                 GlobalObjects.CurrentGame.FusionDemons.Add(newFusion);
+                            }
+
+                            // Update fusions where the new demon might be the result of a previously unknown fusion
+                            // e.g. fusion says Gouki 7+ unknown, then add Gouki 12 Kushi-mitama
+                            var demonFusionsToUpdate = GlobalObjects.CurrentGame.FusionDemons.Where
+                                (x => /*x.Demon3 == null && fgg: doit considérer le cas où quelqu'un insère 
+                                       * le level 23 Gouki avant le level 12 Gouki, et là les fusions
+                                       * 5+6 pointent vers le level 23*/ x.Race3 != null && x.Race3.Id == newDemon.Race.Id);
+                            foreach(Domain.FusionDemon fusionToUpdate in demonFusionsToUpdate)
+                            {
+                                if (newDemon.Level >= fusionToUpdate.Level3)
+                                {
+                                    var fusionRaceObject = GlobalObjects.CurrentGame.FusionRaces.Where
+                                    (x =>
+                                        (x.IdRace1 == fusionToUpdate.Demon1.Race.Id && x.IdRace2 == fusionToUpdate.Demon2.Race.Id) ||
+                                        (x.IdRace2 == fusionToUpdate.Demon1.Race.Id && x.IdRace1 == fusionToUpdate.Demon2.Race.Id))
+                                        .FirstOrDefault();
+                                    var demonFusionTuple = FindDemonFromFusion(fusionToUpdate.Demon1, fusionToUpdate.Demon2, fusionRaceObject);
+
+                                    if (demonFusionTuple.Item1 == null)
+                                    {
+                                        fusionToUpdate.Demon3 = newDemon;
+                                    }
+                                    else if (fusionToUpdate.Demon3 != null && 
+                                        demonFusionTuple.Item1!= null &&
+                                        demonFusionTuple.Item1.Id != fusionToUpdate.Demon3.Id)
+                                    {
+                                        fusionToUpdate.Demon3 = newDemon;
+                                    }
+                                }
+                                
                             }
 
                             RemoveHandlers();
@@ -390,7 +488,7 @@ namespace Yatagarasu
                         _logger.Error(ex);
                         throw;
                     }
-
+                    
                     _addingDemon = false;
                 }
                 
@@ -427,12 +525,14 @@ namespace Yatagarasu
                 }
 
                 var affectedFusions = currentGame.FusionDemons.Where(
-                    x => x.Demon1.Id == selectedDemonId || x.Demon2.Id == selectedDemonId).ToList();
+                    x => x.Demon1.Id == selectedDemonId || x.Demon2.Id == selectedDemonId || 
+                        (x.Demon3 != null && x.Demon3.Id == selectedDemonId)).ToList();
 
                 foreach (Domain.FusionDemon oneFusion in affectedFusions)
                 {
                     var currentFusionRow = this.dgvFusions.Rows[DataGridFusionRowIndexesPerFusionId[oneFusion.Id]];
                     currentFusionRow.Visible = oneFusion.Demon1.IsFused && oneFusion.Demon2.IsFused;
+                    UpdateFusionRowDisplay(currentFusionRow, oneFusion.Demon1, oneFusion.Demon2, oneFusion.Demon3);
                 }
                 _demonFusionStatusChanged = false;
             }
@@ -718,7 +818,8 @@ namespace Yatagarasu
                     .OrderBy(x => x.Level)
                     .FirstOrDefault();
 
-                    returnLevel = returnDemon != null ? returnDemon.Level : ((int)((int)(d1.Level + d2.Level) / 2));
+                    returnLevel = returnDemon != null ? returnDemon.Level : 
+                        (int)Math.Ceiling((double)((int)(d1.Level + d2.Level) / 2));
                 }
 
             }
@@ -748,6 +849,21 @@ namespace Yatagarasu
                     .ToDictionary(d => d.Id);
                 UpdateDemonFusionsGrid();
                 RecalculateFusionRowIndexes();
+
+                foreach (DataGridViewRow dr in dgvDemons.Rows)
+                {
+                    dr.Cells[DGV_DEMON_COL_INPARTY].Style =
+                        dr.Cells[DGV_DEMON_COL_FUSE].Style =
+                        GlobalObjects.GetDefaultDgvcStyle(fontSize: DGV_DEMONS_FONT_SIZE, enabled: true);
+
+                    dr.Cells[DGV_DEMON_COL_LEVEL].Style =
+                        dr.Cells[DGV_DEMON_COL_RACE].Style =
+                        dr.Cells[DGV_DEMON_COL_NAME].Style =
+                        GlobalObjects.GetDefaultDgvcStyle(fontSize: DGV_DEMONS_FONT_SIZE, enabled: true);
+
+                    dr.Cells[DGV_DEMON_COL_INPARTY].ReadOnly =
+                        dr.Cells[DGV_DEMON_COL_FUSE].ReadOnly = false;
+                }
             }
             MessageBox.Show("Saved.");
         }

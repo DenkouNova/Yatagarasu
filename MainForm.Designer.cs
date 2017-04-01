@@ -28,32 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tlpMain = new System.Windows.Forms.TableLayoutPanel();
             this.panel4 = new System.Windows.Forms.Panel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.label4 = new System.Windows.Forms.Label();
             this.dgvFusions = new System.Windows.Forms.DataGridView();
-            this.tlpTierOneLeft = new System.Windows.Forms.TableLayoutPanel();
-            this.pGame = new System.Windows.Forms.Panel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.btnCurrentGame = new System.Windows.Forms.Button();
-            this.pFamilies = new System.Windows.Forms.Panel();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.tlpTier1Races = new System.Windows.Forms.TableLayoutPanel();
-            this.label2 = new System.Windows.Forms.Label();
-            this.dgvRaces = new System.Windows.Forms.DataGridView();
-            this.dgvRaces_Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dgvRaces_Name = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.label3 = new System.Windows.Forms.Label();
-            this.dgvDemons = new System.Windows.Forms.DataGridView();
-            this.dgvDemons_Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dgvDemons_Fuse = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.dgvDemons_InParty = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.dgvDemons_Level = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dgvDemons_Race = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dgvDemons_Name = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvFusions_Id1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvFusions_Level1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvFusions_Race1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -64,6 +45,27 @@
             this.dgvFusions_Level3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvFusions_Race3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvFusions_Name3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.tlpTierOneLeft = new System.Windows.Forms.TableLayoutPanel();
+            this.pGame = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.btnCurrentGame = new System.Windows.Forms.Button();
+            this.pFamilies = new System.Windows.Forms.Panel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.tlpTier1Races = new System.Windows.Forms.TableLayoutPanel();
+            this.label2 = new System.Windows.Forms.Label();
+            this.dgvRaces = new System.Windows.Forms.DataGridView();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.label3 = new System.Windows.Forms.Label();
+            this.dgvDemons = new System.Windows.Forms.DataGridView();
+            this.dgvDemons_Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvDemons_Fuse = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.dgvDemons_InParty = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.dgvDemons_Level = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvDemons_Race = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvDemons_Name = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvRaces_Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvRaces_Name = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tlpMain.SuspendLayout();
             this.panel4.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -156,6 +158,67 @@
             this.dgvFusions.RowHeadersVisible = false;
             this.dgvFusions.Size = new System.Drawing.Size(808, 645);
             this.dgvFusions.TabIndex = 3;
+            // 
+            // dgvFusions_Id1
+            // 
+            this.dgvFusions_Id1.HeaderText = "Id1";
+            this.dgvFusions_Id1.Name = "dgvFusions_Id1";
+            this.dgvFusions_Id1.Visible = false;
+            // 
+            // dgvFusions_Level1
+            // 
+            this.dgvFusions_Level1.HeaderText = "Lv";
+            this.dgvFusions_Level1.Name = "dgvFusions_Level1";
+            this.dgvFusions_Level1.Width = 30;
+            // 
+            // dgvFusions_Race1
+            // 
+            this.dgvFusions_Race1.HeaderText = "Race";
+            this.dgvFusions_Race1.Name = "dgvFusions_Race1";
+            this.dgvFusions_Race1.Width = 80;
+            // 
+            // dgvFusions_Name1
+            // 
+            this.dgvFusions_Name1.HeaderText = "Name";
+            this.dgvFusions_Name1.Name = "dgvFusions_Name1";
+            this.dgvFusions_Name1.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvFusions_Name1.Width = 150;
+            // 
+            // dgvFusions_Level2
+            // 
+            this.dgvFusions_Level2.HeaderText = "Lv";
+            this.dgvFusions_Level2.Name = "dgvFusions_Level2";
+            this.dgvFusions_Level2.Width = 30;
+            // 
+            // dgvFusions_Race2
+            // 
+            this.dgvFusions_Race2.HeaderText = "Race";
+            this.dgvFusions_Race2.Name = "dgvFusions_Race2";
+            this.dgvFusions_Race2.Width = 80;
+            // 
+            // dgvFusions_Name2
+            // 
+            this.dgvFusions_Name2.HeaderText = "Name";
+            this.dgvFusions_Name2.Name = "dgvFusions_Name2";
+            this.dgvFusions_Name2.Width = 150;
+            // 
+            // dgvFusions_Level3
+            // 
+            this.dgvFusions_Level3.HeaderText = "Lv";
+            this.dgvFusions_Level3.Name = "dgvFusions_Level3";
+            this.dgvFusions_Level3.Width = 30;
+            // 
+            // dgvFusions_Race3
+            // 
+            this.dgvFusions_Race3.HeaderText = "Race";
+            this.dgvFusions_Race3.Name = "dgvFusions_Race3";
+            this.dgvFusions_Race3.Width = 80;
+            // 
+            // dgvFusions_Name3
+            // 
+            this.dgvFusions_Name3.HeaderText = "Name";
+            this.dgvFusions_Name3.Name = "dgvFusions_Name3";
+            this.dgvFusions_Name3.Width = 150;
             // 
             // tlpTierOneLeft
             // 
@@ -264,21 +327,6 @@
             this.dgvRaces.Size = new System.Drawing.Size(280, 559);
             this.dgvRaces.TabIndex = 3;
             // 
-            // dgvRaces_Id
-            // 
-            this.dgvRaces_Id.HeaderText = "Id";
-            this.dgvRaces_Id.Name = "dgvRaces_Id";
-            this.dgvRaces_Id.ReadOnly = true;
-            this.dgvRaces_Id.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvRaces_Id.Width = 40;
-            // 
-            // dgvRaces_Name
-            // 
-            this.dgvRaces_Name.HeaderText = "Name";
-            this.dgvRaces_Name.Name = "dgvRaces_Name";
-            this.dgvRaces_Name.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvRaces_Name.Width = 210;
-            // 
             // panel2
             // 
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -343,6 +391,7 @@
             this.dgvDemons_Id.Name = "dgvDemons_Id";
             this.dgvDemons_Id.ReadOnly = true;
             this.dgvDemons_Id.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvDemons_Id.Visible = false;
             this.dgvDemons_Id.Width = 35;
             // 
             // dgvDemons_Fuse
@@ -367,75 +416,33 @@
             // 
             this.dgvDemons_Race.HeaderText = "Race";
             this.dgvDemons_Race.Name = "dgvDemons_Race";
-            this.dgvDemons_Race.Width = 90;
+            this.dgvDemons_Race.Width = 95;
             // 
             // dgvDemons_Name
             // 
             this.dgvDemons_Name.HeaderText = "Name";
             this.dgvDemons_Name.Name = "dgvDemons_Name";
             this.dgvDemons_Name.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvDemons_Name.Width = 170;
+            this.dgvDemons_Name.Width = 180;
             // 
-            // dgvFusions_Id1
+            // dgvRaces_Id
             // 
-            this.dgvFusions_Id1.HeaderText = "Id1";
-            this.dgvFusions_Id1.Name = "dgvFusions_Id1";
-            this.dgvFusions_Id1.Visible = false;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("MS Mincho", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dgvRaces_Id.DefaultCellStyle = dataGridViewCellStyle1;
+            this.dgvRaces_Id.HeaderText = "Id";
+            this.dgvRaces_Id.Name = "dgvRaces_Id";
+            this.dgvRaces_Id.ReadOnly = true;
+            this.dgvRaces_Id.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvRaces_Id.Width = 40;
             // 
-            // dgvFusions_Level1
+            // dgvRaces_Name
             // 
-            this.dgvFusions_Level1.HeaderText = "Lv";
-            this.dgvFusions_Level1.Name = "dgvFusions_Level1";
-            this.dgvFusions_Level1.Width = 30;
-            // 
-            // dgvFusions_Race1
-            // 
-            this.dgvFusions_Race1.HeaderText = "Race";
-            this.dgvFusions_Race1.Name = "dgvFusions_Race1";
-            this.dgvFusions_Race1.Width = 80;
-            // 
-            // dgvFusions_Name1
-            // 
-            this.dgvFusions_Name1.HeaderText = "Name";
-            this.dgvFusions_Name1.Name = "dgvFusions_Name1";
-            this.dgvFusions_Name1.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvFusions_Name1.Width = 150;
-            // 
-            // dgvFusions_Level2
-            // 
-            this.dgvFusions_Level2.HeaderText = "Lv";
-            this.dgvFusions_Level2.Name = "dgvFusions_Level2";
-            this.dgvFusions_Level2.Width = 30;
-            // 
-            // dgvFusions_Race2
-            // 
-            this.dgvFusions_Race2.HeaderText = "Race";
-            this.dgvFusions_Race2.Name = "dgvFusions_Race2";
-            this.dgvFusions_Race2.Width = 80;
-            // 
-            // dgvFusions_Name2
-            // 
-            this.dgvFusions_Name2.HeaderText = "Name";
-            this.dgvFusions_Name2.Name = "dgvFusions_Name2";
-            this.dgvFusions_Name2.Width = 150;
-            // 
-            // dgvFusions_Level3
-            // 
-            this.dgvFusions_Level3.HeaderText = "Lv";
-            this.dgvFusions_Level3.Name = "dgvFusions_Level3";
-            this.dgvFusions_Level3.Width = 30;
-            // 
-            // dgvFusions_Race3
-            // 
-            this.dgvFusions_Race3.HeaderText = "Race";
-            this.dgvFusions_Race3.Name = "dgvFusions_Race3";
-            this.dgvFusions_Race3.Width = 80;
-            // 
-            // dgvFusions_Name3
-            // 
-            this.dgvFusions_Name3.HeaderText = "Name";
-            this.dgvFusions_Name3.Name = "dgvFusions_Name3";
-            this.dgvFusions_Name3.Width = 150;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("MS Mincho", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.dgvRaces_Name.DefaultCellStyle = dataGridViewCellStyle2;
+            this.dgvRaces_Name.HeaderText = "Name";
+            this.dgvRaces_Name.Name = "dgvRaces_Name";
+            this.dgvRaces_Name.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvRaces_Name.Width = 210;
             // 
             // MainForm
             // 
@@ -488,14 +495,6 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.DataGridView dgvFusions;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dgvRaces_Id;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dgvRaces_Name;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dgvDemons_Id;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn dgvDemons_Fuse;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn dgvDemons_InParty;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dgvDemons_Level;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dgvDemons_Race;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dgvDemons_Name;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvFusions_Id1;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvFusions_Level1;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvFusions_Race1;
@@ -506,5 +505,13 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvFusions_Level3;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvFusions_Race3;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvFusions_Name3;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dgvDemons_Id;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn dgvDemons_Fuse;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn dgvDemons_InParty;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dgvDemons_Level;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dgvDemons_Race;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dgvDemons_Name;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dgvRaces_Id;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dgvRaces_Name;
     }
 }
