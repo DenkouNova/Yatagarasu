@@ -263,7 +263,7 @@ namespace Yatagarasu
                 var fusionId = Convert.ToInt32(this.dgvFusions.Rows[i].Cells[DGV_DEMONFUSION_COL_ID].Value);
                 DataGridFusionRowIndexesPerFusionId.Add(fusionId, i);
             }
-            _needToRecalculateRowFusionIndexes = true;
+            _needToRecalculateRowFusionIndexes = false;
         }
 
 
@@ -364,8 +364,18 @@ namespace Yatagarasu
 
                             foreach (Domain.Demon oneDemon in allDemonsSoFar)
                             {
-                                var newFusion = new Domain.FusionDemon(
-                                    GlobalObjects.CurrentGame.Id, oneDemon, newDemon, null);
+                                var fusionRaceObject = GlobalObjects.CurrentGame.FusionRaces.Where
+                                    (x => 
+                                        x.IdRace1 == oneDemon.Race.Id && x.IdRace2 == newDemon.Race.Id ||
+                                        x.IdRace2 == oneDemon.Race.Id && x.IdRace1 == newDemon.Race.Id)
+                                        .FirstOrDefault();
+
+                                var resultDemon = fusionRaceObject == null ? null :
+                                    FindDemonFromFusion(oneDemon, newDemon, fusionRaceObject).Item1;
+
+                                var newFusion = newDemon.Level < oneDemon.Level ?
+                                    new Domain.FusionDemon(GlobalObjects.CurrentGame.Id, oneDemon, newDemon, resultDemon) :
+                                    new Domain.FusionDemon(GlobalObjects.CurrentGame.Id, newDemon, oneDemon, resultDemon);
                                 GlobalObjects.CurrentGame.FusionDemons.Add(newFusion);
                             }
 
@@ -386,8 +396,6 @@ namespace Yatagarasu
                 
             }
 
-
-
             if (_demonFusionStatusChanged)
             {
                 var currentGame = GlobalObjects.CurrentGame;
@@ -396,7 +404,9 @@ namespace Yatagarasu
 
                 var selectedDemonId = Convert.ToInt32(currentRow.Cells[DGV_DEMON_COL_ID].Value);
                 var useInFusions = (bool)(currentRow.Cells[DGV_DEMON_COL_FUSE].Value);
-                var inParty = (bool)(currentRow.Cells[DGV_DEMON_COL_INPARTY].Value);
+                var fggcell = currentRow.Cells[DGV_DEMON_COL_INPARTY];
+
+                var inParty = (bool?)(currentRow.Cells[DGV_DEMON_COL_INPARTY].Value) ?? false;
 
                 var selectedDemon = currentGame.demonsById[selectedDemonId];
 
@@ -431,6 +441,29 @@ namespace Yatagarasu
         private void dgvDemons_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
         {
             _addingDemon = true;
+        }
+
+        private void dgvDemons_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void dgvDemons_CurrentCellDirtyStateChanged(object sender, EventArgs e)
+        {
+            if (dgvDemons.IsCurrentCellDirty)
+            {
+                Type cellType = dgvDemons.Columns[dgvDemons.SelectedCells[0].ColumnIndex].CellType;
+
+                if (cellType == typeof(DataGridViewCheckBoxCell))
+                {
+                    var id = dgvDemons.Rows[dgvDemons.SelectedCells[0].RowIndex].Cells[DGV_DEMON_COL_ID].Value;
+                    if (id != null)
+                    {
+                        _demonFusionStatusChanged = true;
+                        dgvDemons.CommitEdit(DataGridViewDataErrorContexts.Commit);
+                    }
+                }
+            }
         }
         #endregion
 
@@ -676,17 +709,7 @@ namespace Yatagarasu
                 }
                 else
                 {
-                    /*
-                    returnDemon = _dbSession.CreateCriteria<Domain.Demon>().List<Domain.Demon>()
-                    .Where(x =>
-                        x.Race.Id == f.IdRace3 &&
-                        x.Level > (d1.Level + d2.Level) / 2)
-                    .OrderBy(x => x.Level)
-
-                }                    .FirstOrDefault();*/
-
                     returnRace = GlobalObjects.CurrentGame.Races.Where(x => x.Id == f.IdRace3).FirstOrDefault();
-                    returnLevel = ((int)((int)(d1.Level + d2.Level) / 2));
 
                     returnDemon = GlobalObjects.CurrentGame.demonsById.Values
                         .Where(x =>
@@ -694,6 +717,8 @@ namespace Yatagarasu
                         x.Level > (d1.Level + d2.Level) / 2)
                     .OrderBy(x => x.Level)
                     .FirstOrDefault();
+
+                    returnLevel = returnDemon != null ? returnDemon.Level : ((int)((int)(d1.Level + d2.Level) / 2));
                 }
 
             }
@@ -718,7 +743,11 @@ namespace Yatagarasu
             }
             if (!exiting)
             {
+                var currentGame = GlobalObjects.CurrentGame;
+                currentGame.demonsById = currentGame.Races.SelectMany(x => x.Demons)
+                    .ToDictionary(d => d.Id);
                 UpdateDemonFusionsGrid();
+                RecalculateFusionRowIndexes();
             }
             MessageBox.Show("Saved.");
         }
@@ -736,24 +765,7 @@ namespace Yatagarasu
             }
         }
 
-        private void dgvDemons_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
 
-        }
-
-        private void dgvDemons_CurrentCellDirtyStateChanged(object sender, EventArgs e)
-        {
-            if (dgvDemons.IsCurrentCellDirty)
-            {
-                var isCheckBox = (dgvDemons.SelectedCells[0].Value as bool?) != null;
-
-                if (isCheckBox)
-                {
-                    _demonFusionStatusChanged = true;
-                    dgvDemons.CommitEdit(DataGridViewDataErrorContexts.Commit);
-                }
-            }
-        }
 
     }
 }
